@@ -22,16 +22,66 @@ data$UniqueID <- paste("2017", data$Site, data$Treatment2, data$Colornumber,data
 meta17_data<- merge(meta17, data, by= "UniqueID", all.x = TRUE) # if you want to keep all the rows in meta17 all.x=TRUE, but for data you do all.y=TRUE
 
 #Taking out unnecessary Columns
-meta17_data2 <- subset(meta17_data, select = -c(X,V1,Phase_1_DO,Phase_1_temp,Phase_2_DO,Phase_2_Temp,Overall_treatment,Notes_pre,Notes_post,Date_post,Dry_weight_shell,POST_DEAD_ALIVE,Dry_Weight_plate,Dry_weight_final,
-                                                Genetics_Weight))
+meta17_data2 <- subset(meta17_data, select = -c(X,V1,Phase_1_DO,Phase_1_temp,Phase_2_DO,Phase_2_Temp,
+                                                Overall_treatment,Notes_pre,Notes_post,Date_post,
+                                                Dry_weight_shell,POST_DEAD_ALIVE,Dry_Weight_plate,Dry_weight_final,Genetics_Weight))
 
-#Taking out NA's 
-na.rm(meta17_data2)
+#Installing "data.table"
+install.packages("data.table")
+library("data.table")
+
 
 #Uploading asvtable_17
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 
-library(phyloseq)
+
+# Loading Phyloseq 
+library("phyloseq")
+?"phyloseq"
+?otu_table
+?sample_data
+
+#Manipulating data with Phyloseq Example  
+
+nrow(asvtable_17)
+ncol(asvtable_17)
+outmat= matrix(sample(1:100, 100, replace = TRUE), nrow = 10, ncol=10)
+rownames(outmat)<- paste0("OTU", 1:nrow(outmat))
+colnames(outmat)<- paste0("Sample", 1:ncol(outmat))
+
+taxmat= matrix(sample(letters, 70, replace=TRUE), nrow=nrow(outmat), 
+               ncol = 7)
+rownames(taxmat) <- rownames(outmat) 
+colnames(taxmat) <- c("Domain", "Phylum", "Class", "Order", 
+                      "Family", "Genus", "Species")
+
+class(outmat)
+class(taxmat)
+OTU= otu_table(outmat, taxa_are_rows = TRUE)
+TAX= tax_table(taxmat)
+TAX
+
+
+physeq= phyloseq(OTU, TAX)
+physeq
+
+plot_bar(physeq, fill = "Family")
+
+# Phyloseq and "asvtable_17"
+
+matrix(asvtable_17)
+class(asvtable_17)
+?import_biom
+
+OTU= otu_table(asvtable_17, taxa_are_rows = TRUE)
+TAX<- tax_table(asvtable_17)
+
+
+#OTU Value from Biom
+refseqfilename = system.file("extdata", "biom-refseq.fasta",  package="phyloseq")
+import_biom(refseqfilename)
+
+
 
 
 
