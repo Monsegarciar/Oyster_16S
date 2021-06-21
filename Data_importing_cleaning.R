@@ -2,6 +2,7 @@
 # 2021-06-14
 # Author: Monse Garcia 
 
+
 #Data
 
 meta17<-read.csv("C:/Users/monse/OneDrive/Documents/Oyster_16S/Data/metadata_de17 - Copy.csv")
@@ -41,6 +42,11 @@ library("phyloseq")
 ?otu_table
 ?sample_data
 
+#Saving meta17_data2
+write.csv(meta17_data2, file = "Data/meta17_data2.csv")
+
+rownames(meta17_data2)= meta17_data2$UniqueID
+
 #Manipulating data with Phyloseq Example  
 
 nrow(asvtable_17)
@@ -67,19 +73,8 @@ physeq
 
 plot_bar(physeq, fill = "Family")
 
-# Phyloseq and "asvtable_17"
-
-matrix(asvtable_17)
-class(asvtable_17)
-?import_biom
-
-OTU= otu_table(asvtable_17, taxa_are_rows = TRUE)
-TAX<- tax_table(asvtable_17)
 
 
-#OTU Value from Biom
-refseqfilename = system.file("extdata", "biom-refseq.fasta",  package="phyloseq")
-import_biom(refseqfilename)
 
 
 
