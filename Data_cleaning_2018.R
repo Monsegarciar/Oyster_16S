@@ -29,7 +29,11 @@ meta18_data<- subset(meta18, select = -c(X, V1, Site, Year, Species, Phase_1_DO,
 # Adding Na's in blank columns
 genetics_data2018_clean[genetics_data2018_clean == "" | genetics_data2018_clean == " "] <- NA
 
+# Merging the datasets 
+genetics_data2018_clean$Buck_color_num <- paste(genetics_data2018_clean$Bucket, genetics_data2018_clean$Color.Number, sep = "")
+meta18_data$Buck_color_num <- paste(meta18_data$Color_Bucket,meta18_data$Number, sep = "")
 
+meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "Buck_color_num", all.x = TRUE)
 
 #uploading the asvtable_18
 asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
