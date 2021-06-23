@@ -70,17 +70,20 @@ taxa_names(TAX)
 
 ntaxa(physeq_class)
   #8007 taxa
+
+#NMDS Graph
 Phy.ord <- ordinate(physeq_class, "NMDS", "bray")
 p1= plot_ordination(physeq_class, Phy.ord, type = "taxa", color = "Phylum", title = "taxa")
 print(p1)
 
-p1 + facet_wrap(~Phylum, 3)
+p1 + facet_wrap(~Phylum, 6)
 
 
+p3= plot_ordination(physeq_class, Phy.ord, type = "biplot", color = "Phylum", shape = "Kingdom", title = "biplot")
+print(p3)
 
-
-
-
+the_plot <- plot_bar(physeq_class, fill = "Family")
+print(the_plot)
 
 
 
