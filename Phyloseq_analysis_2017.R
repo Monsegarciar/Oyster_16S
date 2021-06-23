@@ -21,6 +21,8 @@ Run23_taxa <- fread("Data/Run23_taxa - Copy.csv")
 rownames(Run23_taxa)= Run23_taxa$V1
 Run23_taxa
 
+#Renaming column names in "Run23_taxa"
+Run23_taxa2 <- 
 
 #Changing row names in "meta_17" data
 rownames(meta17_data2)= meta17_data2$UniqueID
@@ -44,8 +46,8 @@ otumat=asvtable_17
 otu_matrix= as.matrix(otumat, rownames = "V1")
 
 tax_matrix=as.matrix(taxmat, rownames = "V1")
-#colnames(tax_matrix) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
-                         # "Genus")
+colnames(tax_matrix) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
+                         "Genus")
 meta17_data2=as.data.frame(meta17_data2)
 
 #Setting OTU, TAX, and SAMP
@@ -63,3 +65,26 @@ physeq_class
 
 
 taxa_names(TAX)
+
+# "phyloseq_class" Analysis
+
+ntaxa(physeq_class)
+  #8007 taxa
+Phy.ord <- ordinate(physeq_class, "NMDS", "bray")
+p1= plot_ordination(physeq_class, Phy.ord, type = "taxa", color = "Phylum", title = "taxa")
+print(p1)
+
+p1 + facet_wrap(~Phylum, 3)
+
+
+
+
+
+
+
+
+
+
+
+
+
