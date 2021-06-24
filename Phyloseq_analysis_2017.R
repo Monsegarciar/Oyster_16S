@@ -1,15 +1,15 @@
 # Phyloseq Analysis 2017 Data ####
 # 2021-06-21
-# Monse Garcia
+# Author: Monse Garcia
 
-# Required Packages
+# Required Packages ####
 require(phyloseq)
 library(data.table)
 library(ggplot2)
 library(plyr)
 library(dplyr)
 
-#Loading Data
+#Loading Data ####
 
 meta17_data2 <- read.csv("Data/meta17_data2.csv")
 
@@ -22,7 +22,7 @@ rownames(Run23_taxa)= Run23_taxa$V1
 Run23_taxa
 
 #Renaming column names in "Run23_taxa"
-Run23_taxa2 <- 
+
 
 #Changing row names in "meta_17" data
 rownames(meta17_data2)= meta17_data2$UniqueID
@@ -41,6 +41,7 @@ otumat=asvtable_17
 
 ?data.matrix
 ?as.matrix
+?as.data.frame
 
 #Converting to matrix
 otu_matrix= as.matrix(otumat, rownames = "V1")
@@ -56,6 +57,7 @@ OTU= otu_table(otu_matrix, taxa_are_rows = FALSE)
 TAX= tax_table(tax_matrix)
 
 SAMP= sample_data(meta17_data2)
+sample_names(SAMP)
 
 
 OTU=transform_sample_counts(OTU, function(x) 1E6 * x/sum(x))
@@ -71,19 +73,37 @@ taxa_names(TAX)
 ntaxa(physeq_class)
   #8007 taxa
 
-#NMDS Graph
+#NMDS Graph ####
+
+#Just OTU's
 Phy.ord <- ordinate(physeq_class, "NMDS", "bray")
 p1= plot_ordination(physeq_class, Phy.ord, type = "taxa", color = "Phylum", title = "taxa")
 print(p1)
 
 p1 + facet_wrap(~Phylum, 6)
 
+plot_1= plot_ordination(physeq_class, Phy.ord, type= )
 
-p3= plot_ordination(physeq_class, Phy.ord, type = "biplot", color = "Phylum", shape = "Kingdom", title = "biplot")
+#Samples with Peacrabs and Site
+p2= plot_ordination(physeq_class, Phy.ord, type = "sample", color = "peacrabs.x", 
+                    shape = "Site.x")
+print(p2)
+
+p2+ geom_polygon(aes(fill=Weight_pre)) + geom_point(size=7) + ggtitle("samples")
+?geom_polygon
+
+# Biplot
+p3= plot_ordination(physeq_class, Phy.ord, type = "biplot", color = "Treatment2", shape = "Kingdom", title = "biplot")
 print(p3)
 
-the_plot <- plot_bar(physeq_class, fill = "Family")
-print(the_plot)
+#Split Graph
+p4= plot_ordination(physeq_class, Phy.ord, type = "split", 
+                    color = "Phylum", shape = "Site.x")
+print(p4)
+
+
+#the_plot <- plot_bar(physeq_class, fill = "?")
+#print(the_plot)
 
 
 
