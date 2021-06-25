@@ -22,6 +22,18 @@ genetics_data2018$Species2<- ifelse(genetics_data2018$Species== "MB", "LP",
                          ifelse(meta18$Species== "IR", "IR", 
                                 ifelse(meta18$Species=="CV","CV", "AM")))
 
+#Creating UniqueID's
+strsplit(genetics_data2018$Bucket,split =  "", 2)
+genetics_data2018$Buck_color_num <- paste(genetics_data2018$Bucket, genetics_data2018$Color.Number, sep = "")
+genetics_data2018$Bucket2 <- paste(genetics_data2018$Bucket)
+
+genetics_data2018$Bucket2<-ifelse(genetics_data2018$Bucket2=="HP", "HIGH_POLY", ifelse(genetics_data2018$Bucket2=="HM", "HIGH_MONO", ifelse(genetics_data2018$Bucket2== "LP", "LOW_MONO","LOW_POLY")))
+
+
+
+# Adding Na's in blank columns
+genetics_data2018[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
+
 #Taking out unnecessary columns for "gentics_data2018"
 genetics_data2018_clean <- subset(genetics_data2018, select = -c(Species, Date_initial_measure, Mortality_Date, 
                                                                  Date_FinalMeasurement, X, RFTM_Date, Parasites))
@@ -30,20 +42,8 @@ genetics_data2018_clean <- subset(genetics_data2018, select = -c(Species, Date_i
 meta18_data<- subset(meta18, select = -c(X, V1, Site, Year, Species, Phase_1_DO, 
                                          Phase_1_temp, Phase_2_DO, Phase_2_Temp, 
                                          Overall_treatment))
-
-#Creating UniqueID's
-
-str_split_fixed(genetics_data2018_clean$Bucket, "- ", 2)
-
-genetics_data2018_clean$Bucket2<-ifelse(data$Treatment=="HH", "HIGH_POLY", ifelse(data$Treatment=="HL", "HIGH_MONO", ifelse(data$Treatment== "LL", "LOW_MONO","LOW_POLY")))
-
-
-
-# Adding Na's in blank columns
-genetics_data2018_clean[genetics_data2018_clean == "" | genetics_data2018_clean == " "] <- NA
-
 # Merging the datasets 
-genetics_data2018_clean$Buck_color_num <- paste(genetics_data2018_clean$Bucket, genetics_data2018_clean$Color.Number, sep = "")
+
 meta18_data$Buck_color_num <- paste(meta18_data$Color_Bucket,meta18_data$Number, sep = "")
 
 meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "Buck_color_num", all.x = TRUE)

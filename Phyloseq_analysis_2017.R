@@ -102,7 +102,7 @@ p4= plot_ordination(physeq_class, Phy.ord, type = "split",
 print(p4)
 
 
-#the_plot <- plot_bar(physeq_class, fill = "?")
+#the_plot <- plot_bar(physeq_class, fill = "")
 #print(the_plot)
 
 
