@@ -3,14 +3,25 @@
 # Author: Monse Garcia 
 
 #Loading Packages needed
-require(phyloseq, dplyr, tidyr,stringr)
+require(phyloseq)
 library(dplyr)
 library(tidyr)
 library(stringr)
+library(data.table)
 # Data 
 
 meta18<-read.csv("C:/Users/monse/OneDrive/Documents/Oyster_16S/Data/metadata_de18 - Copy.csv")
 genetics_data2018 <- read.csv("Data/DE2018_alldata - Copy.csv")
+
+# Getting rows with 'values' in "Bucket" column
+genetics_data2018 <- genetics_data2018[c(1:1009), ]
+
+# Adding Na's in blank columns
+genetics_data2018[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
+
+# Dropping NA rows in "Bucket" column
+genetics_data2018 <- genetics_data2018 %>%
+  drop_na(Bucket,Color.Number)
 
 #using ifelse for the new species abbreviations
 
@@ -22,31 +33,60 @@ genetics_data2018$Species2<- ifelse(genetics_data2018$Species== "MB", "LP",
                          ifelse(meta18$Species== "IR", "IR", 
                                 ifelse(meta18$Species=="CV","CV", "AM")))
 
-#Creating UniqueID's
-strsplit(genetics_data2018$Bucket,split =  "", 2)
-genetics_data2018$Buck_color_num <- paste(genetics_data2018$Bucket, genetics_data2018$Color.Number, sep = "")
-genetics_data2018$Bucket2 <- paste(genetics_data2018$Bucket)
+#Using ifelse for creating "High/low, poly/mono" ID's 
+genetics_data2018$Bucket2<- ifelse(genetics_data2018$Bucket== "HM1", "HIGH_MONO", 
+                                   ifelse(genetics_data2018$Bucket=="HM2", "HIGH_MONO", 
+                                          ifelse(genetics_data2018$Bucket== "HM3", "HIGH_MONO", 
+                                                 ifelse(genetics_data2018$Bucket=="HM4", "HIGH_MONO", 
+                                                        ifelse(genetics_data2018$Bucket=="HM5", "HIGH_MONO", 
+                                                               ifelse(genetics_data2018$Bucket=="HM6", "HIGH_MONO", 
+                                                                      ifelse(genetics_data2018$Bucket=="HM7", "HIGH_MONO", 
+                                                                             ifelse(genetics_data2018$Bucket=="HM8", "HIGH_MONO", 
+                                                                                    ifelse(genetics_data2018$Bucket=="HM9", "HIGH_MONO", ifelse(genetics_data2018$Bucket== "LM1", "LOW_MONO", 
+         ifelse(genetics_data2018$Bucket=="LM2", "LOW_MONO", 
+                ifelse(genetics_data2018$Bucket== "LM3", "LOW_MONO", 
+                       ifelse(genetics_data2018$Bucket=="LM4", "LOW_MONO", 
+                              ifelse(genetics_data2018$Bucket=="LM5", "LOW_MONO", 
+                                     ifelse(genetics_data2018$Bucket=="LM6", "LOW_MONO", 
+                                            ifelse(genetics_data2018$Bucket=="LM7", "LOW_MONO", 
+                                                   ifelse(genetics_data2018$Bucket=="LM8", "LOW_MONO", 
+                                                          ifelse(genetics_data2018$Bucket=="LM9", "LOW_MONO", ifelse(genetics_data2018$Bucket== "LP1", "LOW_POLY", 
+         ifelse(genetics_data2018$Bucket=="LP2", "LOW_POLY", 
+                ifelse(genetics_data2018$Bucket== "LP3", "LOW_POLY", 
+                       ifelse(genetics_data2018$Bucket=="LP4", "LOW_POLY", 
+                              ifelse(genetics_data2018$Bucket=="LP5", "LOW_POLY", 
+                                     ifelse(genetics_data2018$Bucket=="LP6", "LOW_POLY", 
+                                            ifelse(genetics_data2018$Bucket=="LP7", "LOW_POLY", 
+                                                   ifelse(genetics_data2018$Bucket=="LP8", "LOW_POLY", 
+                                                          ifelse(genetics_data2018$Bucket=="LP9", "LOW_POLY", "HIGH_POLY")))))))))))))))))))))))))))
+  
+# Combining Bucket and Color.Number columns
 
-genetics_data2018$Bucket2<-ifelse(genetics_data2018$Bucket2=="HP", "HIGH_POLY", ifelse(genetics_data2018$Bucket2=="HM", "HIGH_MONO", ifelse(genetics_data2018$Bucket2== "LP", "LOW_MONO","LOW_POLY")))
+genetics_data2018$Bucket_colnum <- paste0(genetics_data2018$Bucket, genetics_data2018$Color.Number, sep = "")
 
-
-
-# Adding Na's in blank columns
-genetics_data2018[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
 
 #Taking out unnecessary columns for "gentics_data2018"
 genetics_data2018_clean <- subset(genetics_data2018, select = -c(Species, Date_initial_measure, Mortality_Date, 
                                                                  Date_FinalMeasurement, X, RFTM_Date, Parasites))
+  
 
 # Taking out unnecessary columns for "meta18"
-meta18_data<- subset(meta18, select = -c(X, V1, Site, Year, Species, Phase_1_DO, 
+meta18_data<- subset(meta18, select = -c(X, V1, Site, Species, Phase_1_DO, 
                                          Phase_1_temp, Phase_2_DO, Phase_2_Temp, 
                                          Overall_treatment))
+
+# Creating UniqueID's for genetics_data2018
+#Example: 2018__HIGH_POLY_HP1W5_CV
+
+genetics_data2018_clean$UniqueID <- paste("2018", genetics_data2018_clean$Bucket2, genetics_data2018_clean$Bucket_colnum, genetics_data2018_clean$Species, sep = "_")
+
 # Merging the datasets 
+meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "UniqueID", all.y = TRUE)
+?merge
+meta_gen18_data
+#Taking out unecessary columns in merging data
+meta_gen18_data <- subset(meta_gen18_data, select = -c(live_barnacles, dead_barnacles, polydora_scars, Old.New))
 
-meta18_data$Buck_color_num <- paste(meta18_data$Color_Bucket,meta18_data$Number, sep = "")
-
-meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "Buck_color_num", all.x = TRUE)
 
 #Saving the new data
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")

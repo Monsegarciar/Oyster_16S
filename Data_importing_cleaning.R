@@ -20,7 +20,7 @@ data$Colornumber<- paste0(data$Color, data$Number)
 
 data$UniqueID <- paste("2017", data$Site, data$Treatment2, data$Colornumber,data$Species, sep = "_")
 
-meta17_data<- merge(meta17, data, by= "UniqueID", all.x = TRUE) # if you want to keep all the rows in meta17 all.x=TRUE, but for data you do all.y=TRUE
+meta17_data<- merge(meta17, data, by= "UniqueID", all.x= TRUE) # if you want to keep all the rows in meta17 all.x=TRUE, but for data you do all.y=TRUE
 
 #Taking out unnecessary Columns
 meta17_data2 <- subset(meta17_data, select = -c(X,V1,Phase_1_DO,Phase_1_temp,Phase_2_DO,Phase_2_Temp,

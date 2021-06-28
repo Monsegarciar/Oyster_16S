@@ -19,8 +19,9 @@ Run23_taxa <- fread("Data/Run23_taxa - Copy.csv")
 
 #Changing row names in "Run23_taxa"
 rownames(Run23_taxa)= Run23_taxa$V1
-Run23_taxa
+rownames(Run23_taxa)
 
+rownames(Run23_taxa)
 #Renaming column names in "Run23_taxa"
 
 
@@ -32,6 +33,7 @@ rownames(meta17_data2)
 
 #Changing row names in "asvtable_17" data
 rownames(asvtable_17)= asvtable_17$V1
+asvtable_17$V1=NULL
 rownames(asvtable_17)
 
 
@@ -62,11 +64,11 @@ sample_names(SAMP)
 
 OTU=transform_sample_counts(OTU, function(x) 1E6 * x/sum(x))
 
+
 physeq_class = phyloseq(OTU, TAX, SAMP)
 physeq_class
-
-
 taxa_names(TAX)
+
 
 # "phyloseq_class" Analysis
 
