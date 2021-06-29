@@ -3,12 +3,12 @@
 # Author: Monse Garcia
 
 #Packages Required
-library(phyloseq)
-library(ggplot2)
+require(phyloseq)
+require(ggplot2)
 require(RColorBrewer)
 
-mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors
-plot_bar(metaSF,  fill="Category", x="Replicate") +
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(299) # How many colors
+plot_bar(pp.ch,  fill="Category", x="Replicate") +
   geom_bar(aes(color=Category, fill=Category), stat="identity", position="stack")+
   facet_grid(Year~Site_Name, scales="free_x")+
   scale_fill_manual(values=mycolors)+
@@ -42,21 +42,43 @@ pp.ch= subset_taxa(physeq_class, Phylum=="Proteobacteria")
 plot_bar(pp.ch) #Plot bar of samples(x) and abundance (y) of Proteobacteria
 bar1=plot_bar(pp.ch, x="Site.x", fill = "Genus")
 print(bar1)
-
-
+?facet_grid
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(299)
+plot_bar(pp.ch,  fill="Genus", x="Treatment2") +
+  geom_bar(aes(color=Genus, fill=Genus), stat="identity", position="stack")+
+  facet_grid(Site.x~Species.x, scales="free_x")+
+  scale_fill_manual(values=mycolors)+
+  scale_color_manual(values=mycolors)+
+  theme_bw()+
+  theme(legend.position="top", legend.text=element_text(size=10), panel.border = element_blank(), 
+        panel.grid.major = element_blank(), 
+        panel.grid.minor.x = element_blank(),
+        axis.ticks.x=element_blank(), axis.line=element_line(color="black"),
+        text = element_text(size=10))
 
 b2=plot_bar(pp.ch, "Site.x", fill="Genus", facet_grid=~Family) 
 print(b2)
-b2 + geom_point(aes(x=Family, y=Abundance), color="black", position="jitter", size=3)
+b2 + geom_point(aes(x=Family, y=Abundance), color="black", position="jitter", size=3) #came up too big to fit, might use top OTU's instead
+
+# Top OTU's 
+TopNOTUs <- names(sort(taxa_sums(physeq_class), TRUE)[1:10])
+phys10   <- prune_species(TopNOTUs, physeq_class)
+
+
+p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus)
+p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
 
 ## Alpha Diversity Graphics
 
-PC <- prune_species(speciesSums(physeq_class)> 0, physeq_class)
+PC =prune_species(speciesSums(physeq_class)> 0, physeq_class)
 PC
-plot_richness(PC) #https://github.com/joey711/phyloseq/issues/552 for troubleshooting
+plot_richness(PC) 
 
-plot_richness(PC, measures = c("Site"))
+?plot_richness
+plot_richness(PC, x="Site.x", measures=c("Chao1", "Shannon"))
 
+?estimate_richness
+estimate_richness(physeq_class, split = TRUE, measures = NULL)
 OTU2= otu_table(otu_matrix, taxa_are_rows = FALSE)
 OTU2= transform_sample_counts(OTU, as.integer)
 
@@ -65,10 +87,14 @@ taxa_names(physeq_class2)
 physeq_class2
 
 
+#meta_1(PC)$ <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+
 #Question 2 ####
-#Look at peacrabs and sites. 
+#Looking at peacrabs in sites or treatments 
 
-
+# Plot bars 
+# Plot ordination 
+# Alpha diversity?
 
 #Question 3 ####
 #Weight pre and post?

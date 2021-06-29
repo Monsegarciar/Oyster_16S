@@ -46,7 +46,7 @@ otumat=asvtable_17
 ?as.data.frame
 
 #Converting to matrix
-otu_matrix= as.matrix(otumat, rownames = "V1")
+otu_matrix= as.matrix(otumat, rownames = rownames(asvtable_17))
 
 tax_matrix=as.matrix(taxmat, rownames = "V1")
 colnames(tax_matrix) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 

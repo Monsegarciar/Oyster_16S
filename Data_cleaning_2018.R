@@ -79,7 +79,7 @@ meta18_data<- subset(meta18, select = -c(X, V1, Site, Species, Phase_1_DO,
 #Example: 2018__HIGH_POLY_HP1W5_CV
 
 genetics_data2018_clean$UniqueID <- paste("2018", genetics_data2018_clean$Bucket2, genetics_data2018_clean$Bucket_colnum, genetics_data2018_clean$Species, sep = "_")
-
+genetics_data2018_clean$UniqueID[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
 # Merging the datasets 
 meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "UniqueID", all.y = TRUE)
 ?merge
@@ -88,6 +88,10 @@ meta_gen18_data
 meta_gen18_data <- subset(meta_gen18_data, select = -c(live_barnacles, dead_barnacles, polydora_scars, Old.New))
 
 
+meta18_data[duplicated(meta18_data$UniqueID),]
+genetics_data2018[duplicated(genetics_data2018),]
+
+genetics_data2018_clean[duplicated(genetics_data2018_clean$Bucket_colnum),]
 #Saving the new data
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
 
