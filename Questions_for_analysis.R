@@ -65,22 +65,23 @@ TopNOTUs <- names(sort(taxa_sums(physeq_class), TRUE)[1:10])
 phys10   <- prune_species(TopNOTUs, physeq_class)
 
 
-p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus)
+p= plot_bar(phys10, "Site.x", fill="Treatment2", facet_grid=~Genus)
 p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
 
 ## Alpha Diversity Graphics
 
 PC =prune_species(speciesSums(physeq_class)> 0, physeq_class)
 PC
-plot_richness(PC) 
 
 ?plot_richness
-plot_richness(PC, x="Site.x", measures=c("Chao1", "Shannon"))
+plot_rich= plot_richness(PC, x="Site.x", measures=c("Chao1", "Shannon"))
+plot_rich2= plot_richness(PC, x= "Site.x", color = "Treatment2", measures = c("Chao1", "Shannon"))
+print(plot_rich2)
 
 ?estimate_richness
 estimate_richness(physeq_class, split = TRUE, measures = NULL)
 OTU2= otu_table(otu_matrix, taxa_are_rows = FALSE)
-OTU2= transform_sample_counts(OTU, as.integer)
+
 
 physeq_class2 = phyloseq(OTU2, TAX, SAMP)
 taxa_names(physeq_class2)
@@ -94,7 +95,7 @@ physeq_class2
 
 # Plot bars 
 # Plot ordination 
-# Alpha diversity?
+# Alpha diversity- can look into this with how diverse those with peacrabs are, etc. ?
 
 #Question 3 ####
 #Weight pre and post?
