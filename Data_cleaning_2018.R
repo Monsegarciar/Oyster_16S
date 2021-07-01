@@ -13,9 +13,6 @@ library(data.table)
 meta18<-read.csv("C:/Users/monse/OneDrive/Documents/Oyster_16S/Data/metadata_de18 - Copy.csv")
 genetics_data2018 <- read.csv("Data/DE2018_alldata - Copy.csv")
 
-# Getting rows with 'values' in "Bucket" column
-genetics_data2018 <- genetics_data2018[c(1:1009), ]
-
 # Adding Na's in blank columns
 genetics_data2018[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
 
@@ -64,34 +61,21 @@ genetics_data2018$Bucket2<- ifelse(genetics_data2018$Bucket== "HM1", "HIGH_MONO"
 
 genetics_data2018$Bucket_colnum <- paste0(genetics_data2018$Bucket, genetics_data2018$Color.Number, sep = "")
 
-
-#Taking out unnecessary columns for "gentics_data2018"
-genetics_data2018_clean <- subset(genetics_data2018, select = -c(Species, Date_initial_measure, Mortality_Date, 
-                                                                 Date_FinalMeasurement, X, RFTM_Date, Parasites))
   
-
-# Taking out unnecessary columns for "meta18"
-meta18_data<- subset(meta18, select = -c(X, V1, Site, Species, Phase_1_DO, 
-                                         Phase_1_temp, Phase_2_DO, Phase_2_Temp, 
-                                         Overall_treatment))
-
 # Creating UniqueID's for genetics_data2018
 #Example: 2018__HIGH_POLY_HP1W5_CV
 
-genetics_data2018_clean$UniqueID <- paste("2018", genetics_data2018_clean$Bucket2, genetics_data2018_clean$Bucket_colnum, genetics_data2018_clean$Species, sep = "_")
-genetics_data2018_clean$UniqueID[genetics_data2018 == "" | genetics_data2018 == " "] <- NA
+genetics_data2018$UniqueID <- paste("2018", genetics_data2018$Bucket2, genetics_data2018$Bucket_colnum, genetics_data2018$Species, sep = "_")
+
+genetics_data2018= distinct(genetics_data2018,UniqueID, .keep_all = TRUE)
+
 # Merging the datasets 
-meta_gen18_data <- merge(meta18_data, genetics_data2018_clean, by= "UniqueID", all.y = TRUE)
-?merge
-meta_gen18_data
+meta_gen18_data <- merge(meta18, genetics_data2018, by= "UniqueID", all.x=TRUE)
+
 #Taking out unecessary columns in merging data
-meta_gen18_data <- subset(meta_gen18_data, select = -c(live_barnacles, dead_barnacles, polydora_scars, Old.New))
+meta_gen18_data <- subset(meta_gen18_data, select = -c(X.x, Site, V1, Phase_1_DO, Phase_2_DO, Phase_1_temp, Phase_2_Temp, Overall_treatment, Date_initial_measure, 
+                                                       Mortality_Date, Date_FinalMeasurement, RFTM_Date, Parasites, X.y, Species.x, Species.y))
 
-
-meta18_data[duplicated(meta18_data$UniqueID),]
-genetics_data2018[duplicated(genetics_data2018),]
-
-genetics_data2018_clean[duplicated(genetics_data2018_clean$Bucket_colnum),]
 #Saving the new data
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
 
@@ -107,7 +91,8 @@ rownames(meta_gen18_data)= meta_gen18_data$UniqueID
 physeq = phyloseq(OTU, TAX, meta_gen18_data)
 physeq
 
-
+nrow(genetics_data2018_clean)
+length(unique(genetics_data2018_clean$UniqueID))
 
 
 

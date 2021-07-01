@@ -7,7 +7,7 @@ require(phyloseq)
 require(ggplot2)
 require(RColorBrewer)
 
-mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(299) # How many colors
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors
 plot_bar(pp.ch,  fill="Category", x="Replicate") +
   geom_bar(aes(color=Category, fill=Category), stat="identity", position="stack")+
   facet_grid(Year~Site_Name, scales="free_x")+
@@ -30,19 +30,19 @@ plot_bar(pp.ch,  fill="Category", x="Replicate") +
 #Taxonomy bar to see if there are more abundance in one site than the other
 
 #Split Graph with Site and Phylum
-p4= plot_ordination(physeq_class, Phy.ord, type = "split", 
+p4= plot_ordination(physeq_class17, Phy.ord, type = "split", 
                     color = "Phylum", shape = "Site.x")
 print(p4)
 ##Plot bars with phylum 
-table_taxa <-table(taxmat$V3) # Used the table() function to see which phylum was most common
+table_taxa <-table(taxmat17$V3) # Used the table() function to see which phylum was most common
 View(table_taxa)
 
 #Most common phylum and site graph
-pp.ch= subset_taxa(physeq_class, Phylum=="Proteobacteria") 
+pp.ch= subset_taxa(physeq_class17, Phylum=="Proteobacteria") 
 plot_bar(pp.ch) #Plot bar of samples(x) and abundance (y) of Proteobacteria
 bar1=plot_bar(pp.ch, x="Site.x", fill = "Genus")
 print(bar1)
-?facet_grid
+
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(299)
 plot_bar(pp.ch,  fill="Genus", x="Treatment2") +
   geom_bar(aes(color=Genus, fill=Genus), stat="identity", position="stack")+
@@ -61,32 +61,23 @@ print(b2)
 b2 + geom_point(aes(x=Family, y=Abundance), color="black", position="jitter", size=3) #came up too big to fit, might use top OTU's instead
 
 # Top OTU's 
-TopNOTUs <- names(sort(taxa_sums(physeq_class), TRUE)[1:10])
-phys10   <- prune_species(TopNOTUs, physeq_class)
+TopNOTUs <- names(sort(taxa_sums(physeq_class17), TRUE)[1:10])
+phys10 <- prune_species(TopNOTUs, physeq_class17)
 
 
-p= plot_bar(phys10, "Site.x", fill="Treatment2", facet_grid=~Genus)
+p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus) # Switching Treatment w/ site
+print(p)
+
 p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
 
 ## Alpha Diversity Graphics
 
-PC =prune_species(speciesSums(physeq_class)> 0, physeq_class)
-PC
-
 ?plot_richness
-plot_rich= plot_richness(PC, x="Site.x", measures=c("Chao1", "Shannon"))
-plot_rich2= plot_richness(PC, x= "Site.x", color = "Treatment2", measures = c("Chao1", "Shannon"))
+plot_rich= plot_richness(physeq_class17, x="Site.x", measures=c("Simpson", "Shannon"))
+print(plot_rich)
+
+plot_rich2= plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"))
 print(plot_rich2)
-
-?estimate_richness
-estimate_richness(physeq_class, split = TRUE, measures = NULL)
-OTU2= otu_table(otu_matrix, taxa_are_rows = FALSE)
-
-
-physeq_class2 = phyloseq(OTU2, TAX, SAMP)
-taxa_names(physeq_class2)
-physeq_class2
-
 
 #meta_1(PC)$ <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
 
