@@ -27,8 +27,8 @@ meta18$Species2<- ifelse(meta18$Species== "MB", "LP",
                                 ifelse(meta18$Species=="CV","CV", "AM")))
 
 genetics_data2018$Species2<- ifelse(genetics_data2018$Species== "MB", "LP", 
-                         ifelse(meta18$Species== "IR", "IR", 
-                                ifelse(meta18$Species=="CV","CV", "AM")))
+                         ifelse(genetics_data2018$Species== "IR", "IR", 
+                                ifelse(genetics_data2018$Species=="CV","CV", "AM")))
 
 #Using ifelse for creating "High/low, poly/mono" ID's 
 genetics_data2018$Bucket2<- ifelse(genetics_data2018$Bucket== "HM1", "HIGH_MONO", 
@@ -67,7 +67,6 @@ genetics_data2018$Bucket_colnum <- paste0(genetics_data2018$Bucket, genetics_dat
 
 genetics_data2018$UniqueID <- paste("2018", genetics_data2018$Bucket2, genetics_data2018$Bucket_colnum, genetics_data2018$Species, sep = "_")
 
-genetics_data2018= distinct(genetics_data2018,UniqueID, .keep_all = TRUE)
 
 # Merging the datasets 
 meta_gen18_data <- merge(meta18, genetics_data2018, by= "UniqueID", all.x=TRUE)

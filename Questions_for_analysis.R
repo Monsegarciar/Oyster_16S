@@ -5,8 +5,14 @@
 #Packages Required
 require(phyloseq)
 require(ggplot2)
+library(data.table)
 require(RColorBrewer)
 
+#Loading Physeq w/out transform_sample_counts() function
+physeq_class17 <- readRDS("Data/physeq_class17.rds")
+physeq_class18 <- readRDS("Data/physeq_class18.rds")
+
+# Example of code with ColorBrewer
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors
 plot_bar(pp.ch,  fill="Category", x="Replicate") +
   geom_bar(aes(color=Category, fill=Category), stat="identity", position="stack")+
@@ -20,7 +26,7 @@ plot_bar(pp.ch,  fill="Category", x="Replicate") +
         axis.ticks.x=element_blank(), axis.line=element_line(color="black"),
         text = element_text(size=10))
 #want a specific color with hexcodes or do red and blue or other colors instead of mycolors in the code
-#search r color paletes different kinds 
+#search r color pallets different kinds 
 
 #Question 1 ####
 #Sites relationship with oyster species
@@ -33,6 +39,7 @@ plot_bar(pp.ch,  fill="Category", x="Replicate") +
 p4= plot_ordination(physeq_class17, Phy.ord, type = "split", 
                     color = "Phylum", shape = "Site.x")
 print(p4)
+
 ##Plot bars with phylum 
 table_taxa <-table(taxmat17$V3) # Used the table() function to see which phylum was most common
 View(table_taxa)
@@ -60,15 +67,26 @@ b2=plot_bar(pp.ch, "Site.x", fill="Genus", facet_grid=~Family)
 print(b2)
 b2 + geom_point(aes(x=Family, y=Abundance), color="black", position="jitter", size=3) #came up too big to fit, might use top OTU's instead
 
-# Top OTU's 
+# Top OTU's ####
+#2017 Data
 TopNOTUs <- names(sort(taxa_sums(physeq_class17), TRUE)[1:10])
 phys10 <- prune_species(TopNOTUs, physeq_class17)
 
 
-p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus) # Switching Treatment w/ site
+p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus, title= "Top NOTUs SIte and Treatment 2017") # Switching Treatment w/ site
 print(p)
 
 p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
+
+# 2018
+TopNOTUs18 <- names(sort(taxa_sums(physeq_class18), TRUE)[1:20])
+phys20_18 <- prune_species(TopNOTUs18, physeq_class18)
+
+p_2= plot_bar(phys20_18, "Bucket2", fill="Species2.x", facet_grid=~Genus, 
+             title= "Top NOTUs in Species and Treatment 2018") # Switching Treatment w/ site
+print(p)
+
+p_2 + geom_bar(aes(color=Species2.x, fill=Species2.x), stat="identity", position="stack", na.rm = TRUE)
 
 ## Alpha Diversity Graphics
 
@@ -76,10 +94,24 @@ p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
 plot_rich= plot_richness(physeq_class17, x="Site.x", measures=c("Simpson", "Shannon"))
 print(plot_rich)
 
-plot_rich2= plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"))
+plot_rich2= plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for Treatment and Species 2017")
 print(plot_rich2)
 
-#meta_1(PC)$ <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+#meta_1(physeq_class17)$ <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+
+#Standard deviation and mean ####
+
+#NW Site-Sample standard deviation
+?set.seed
+n <- 38
+set.seed(38)
+x <- rnorm(n)
+x
+sd(x, na.rm = TRUE)
+
+#NW Site- Population standard deviation
+sqrt((n-1)/n) * sd(x)
+
 
 #Question 2 ####
 #Looking at peacrabs in sites or treatments 
