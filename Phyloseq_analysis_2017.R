@@ -53,11 +53,15 @@ TAX17= tax_table(tax_matrix17)
 SAMP17= sample_data(meta17_data)
 
 
-OTU_count17=transform_sample_counts(OTU, function(x) 1E6 * x/sum(x))
+OTU_count17=transform_sample_counts(OTU17, function(x) 1E6 * x/sum(x))
 
 
 physeq_class17 = phyloseq(OTU17, TAX17, SAMP17)
 physeq_class17
+
+physeq_count17 = phyloseq(OTU_count17, TAX17, SAMP17)
+physeq_count17
+
 
 # Saving Physeq as an RDS
 saveRDS(physeq_class17, "Data/physeq_class17.rds")

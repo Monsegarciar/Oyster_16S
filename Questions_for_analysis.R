@@ -7,6 +7,7 @@ require(phyloseq)
 require(ggplot2)
 library(data.table)
 require(RColorBrewer)
+library("ggpubr")
 
 #Loading Physeq w/out transform_sample_counts() function
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
@@ -101,17 +102,23 @@ print(plot_rich2)
 
 #Standard deviation and mean ####
 
-#NW Site-Sample standard deviation
-?set.seed
-n <- 38
-set.seed(38)
-x <- rnorm(n)
-x
-sd(x, na.rm = TRUE)
+richness17= estimate_richness(physeq_class17, split = TRUE, measures = c("Simpson", "Shannon"))
+head(factor(meta17_data))
 
-#NW Site- Population standard deviation
-sqrt((n-1)/n) * sd(x)
+plot_richness(physeq_class17, x="Site.x", measures=c("Shannon", "Simpson"), color = "Site.x")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
+a_my_comparisons <- list(c("NW", "OY", "SW"))
+symnum.args = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons, label = "p.signif", symnum.args = symnum.args)
+
+hist(richness17$Shannon, main="Shannon index", xlab="")
+hist(richness17$Simpson, main="Simpson index", xlab="")
 
 #Question 2 ####
 #Looking at peacrabs in sites or treatments 
