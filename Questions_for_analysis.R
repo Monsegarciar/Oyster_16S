@@ -8,6 +8,18 @@ require(ggplot2)
 library(data.table)
 require(RColorBrewer)
 library("ggpubr")
+library(dplyr)
+library(tidyr)
+
+# Loading data 
+
+meta17_data <- read.csv("Data/meta17_data_update.csv")
+asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
+
+meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
+asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
+
+
 
 #Loading Physeq w/out transform_sample_counts() function
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
@@ -89,8 +101,9 @@ print(p)
 
 p_2 + geom_bar(aes(color=Species2.x, fill=Species2.x), stat="identity", position="stack", na.rm = TRUE)
 
-## Alpha Diversity Graphics
+# Alpha Diversity Graphics ####
 
+#2017 Data
 ?plot_richness
 plot_rich= plot_richness(physeq_class17, x="Site.x", measures=c("Simpson", "Shannon"))
 print(plot_rich)
@@ -98,27 +111,50 @@ print(plot_rich)
 plot_rich2= plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for Treatment and Species 2017")
 print(plot_rich2)
 
-#meta_1(physeq_class17)$ <- getVariable(GP, "SampleType") %in% c("Feces", "Mock", "Skin", "Tongue")
+#2018 Data
+plo_rich18= plot_richness(physeq_class18, x="Bucket2", measures=c("Chao1", "Shannon"))
+print(plo_rich18)
+
+plo_rich_species18= plot_richness(physeq_class18, x="Bucket2", color = "Species2.x",measures=c("Simpson", "Shannon"), title = "Alpha Diveristy for Treatments and Species 2018")
+print(plo_rich_species18)
 
 #Standard deviation and mean ####
 
+# 2017 Data 
 richness17= estimate_richness(physeq_class17, split = TRUE, measures = c("Simpson", "Shannon"))
-head(factor(meta17_data))
 
 plot_richness(physeq_class17, x="Site.x", measures=c("Shannon", "Simpson"), color = "Site.x")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
-a_my_comparisons <- list(c("NW", "OY", "SW"))
-symnum.args = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
-
-plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x")+
+a_my_comparisons17 <- list(c("NW", "OY", "SW"))
+symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+?symnum
+plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x", title = "Boxplot of Sites 2017")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
-  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons, label = "p.signif", symnum.args = symnum.args)
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
 
 hist(richness17$Shannon, main="Shannon index", xlab="")
 hist(richness17$Simpson, main="Simpson index", xlab="")
+
+#2018 Data
+richness18= estimate_richness(physeq_class18, split= TRUE, measures= c("Simpson", "Shannon"))
+
+plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Bucket2")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+a_my_comparisons18 <- list(c("HIGH_MONO", "HIGH_POLY"), c("LOW_MONO", "LOW_POLY"), c("HIGH_POLY", "LOW_MONO"))
+symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon","Simpson"), color = "Bucket2", title = "Boxplot of Treatments 2018")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons18, label = "p.signif", symnum.args = symnum.args18)
+
+hist(richness18$Simpson, main="Simpson index", xlab="")
+hist(richness18$Shannon, main="Shannon index", xlab="")
 
 #Question 2 ####
 #Looking at peacrabs in sites or treatments 
@@ -128,4 +164,32 @@ hist(richness17$Simpson, main="Simpson index", xlab="")
 # Alpha diversity- can look into this with how diverse those with peacrabs are, etc. ?
 
 #Question 3 ####
-#Weight pre and post?
+#Weight pre and post with peacrabs
+
+#Adding new column for average weight
+
+#2017 Data
+weight_pre <- as.numeric(meta17_data$Weight_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Weight_avg= (Weight_post- weight_pre)/ weight_pre)
+
+#2018 Data
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Weight_avg18= (Weight_post- Weight)/ Weight)
+
+#Saving new data
+write.csv(meta17_data, file = "Data/meta17_data_update.csv")
+write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
+
+# Analysis 
+
+ggplot(meta17_data, mapping = aes(x=Weight_avg, y=peacrabs.x)) + geom_point()
+
+plot_bar(physeq_class17, "Weight_avg", fill="peacrabs.x", facet_grid=~Site.x) #add scaling to maybe see better
+
+plot_bar(physeq_class17, x="Site.x", fill="peacrabs.x")
+
+
+
+

@@ -11,7 +11,7 @@ library(dplyr)
 
 #Loading Data ####
 
-meta17_data <- read.csv("Data/meta17_data2.csv")
+meta17_data <- read.csv("Data/meta17_data_update.csv")
 
 
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
