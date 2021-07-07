@@ -120,6 +120,9 @@ print(plo_rich_species18)
 
 #Standard deviation and mean ####
 
+# Getting NA's in Bucket2 Column a value
+meta_gen18_data$Bucket2[is.na(meta_gen18_data$Bucket2)] <- "LOW_POLY"
+
 # 2017 Data 
 richness17= estimate_richness(physeq_class17, split = TRUE, measures = c("Simpson", "Shannon"))
 
@@ -177,6 +180,62 @@ meta17_data <- meta17_data %>%
 #2018 Data
 meta_gen18_data <- meta_gen18_data %>%
   mutate(Weight_avg18= (Weight_post- Weight)/ Weight)
+
+# Adding new column for averages in length, width, height
+
+# 2017 Data
+height_pre <- as.numeric(meta17_data$Height_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Height_avg= (Height_post- height_pre)/ height_pre)
+
+width_pre <- as.numeric(meta17_data$Width_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Width_avg= (Width_post- width_pre)/ width_pre)
+
+length_pre <- as.numeric(meta17_data$Length_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Length_avg= (Length_post- length_pre)/ length_pre)
+
+
+#2018 Data
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Height_avg= (Height_post- Height_pre)/ Height_pre)
+
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Width_avg= (Width_post- Width_pre)/ Width_pre)
+
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Length_avg= (Length_post- Length_pre)/ Length_pre)
+
+# Adding Columns with weight, length, height, width differences
+
+#2017 Data
+weight_pre <- as.numeric(meta17_data$Weight_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Weight_diff= Weight_post- weight_pre)
+
+height_pre <- as.numeric(meta17_data$Height_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Height_diff= Height_post- height_pre)
+
+width_pre <- as.numeric(meta17_data$Width_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Width_diff= Width_post- width_pre)
+
+length_pre <- as.numeric(meta17_data$Length_pre)
+
+meta17_data <- meta17_data %>%
+  mutate(Length_diff= Length_post- length_pre)
+
+#2018 Data
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Height_diff= Height_post- Height_pre)
 
 #Saving new data
 write.csv(meta17_data, file = "Data/meta17_data_update.csv")
