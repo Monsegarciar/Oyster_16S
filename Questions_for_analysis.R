@@ -237,6 +237,18 @@ meta17_data <- meta17_data %>%
 meta_gen18_data <- meta_gen18_data %>%
   mutate(Height_diff= Height_post- Height_pre)
 
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Width_diff= Width_post- Width_pre)
+
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Length_diff= Length_post- Length_pre)
+
+meta_gen18_data <- meta_gen18_data %>%
+  mutate(Weight_diff= Weight_post- Weight)
+
+meta17_data <- subset(meta17_data, select = -c(X.1, X, X.2, Number.x, Number.y))
+meta_gen18_data <- subset(meta_gen18_data, select = -c(X, X.1, X.2))
+
 #Saving new data
 write.csv(meta17_data, file = "Data/meta17_data_update.csv")
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
