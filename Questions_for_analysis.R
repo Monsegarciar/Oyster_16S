@@ -160,14 +160,43 @@ hist(richness18$Simpson, main="Simpson index", xlab="")
 hist(richness18$Shannon, main="Shannon index", xlab="")
 
 #Question 2 ####
-#Looking at peacrabs in sites or treatments 
+#Looking at pea crabs in sites or treatments 
 
 # Plot bars 
-# Plot ordination 
-# Alpha diversity- can look into this with how diverse those with peacrabs are, etc. ?
+# Plot ordination  diverse those with 
+
+# RFTM Score and Species (Alpha Diversity)
+plot_richness(physeq_class18, x= "Species2.x", color = "RFTM_score.x", measures = c("Simpson", "Shannon"), title = "RFTM Score in Species 2018")
+
+a_my_comparisons18_Species <- list(c("AM", "CV"), c("IR", "LP"), c("CV", "IR"))
+symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), color = "RFTM_score.x", title = "Boxplot of RFTM Scores and Species 2018")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons18_Species, label = "p.signif", symnum.args = symnum.args18)
+
+#Alpha Diversity of Species Significance
+plot_richness(physeq_class18, x= "Species2.x", color = "Species2.x", measures = c("Simpson", "Shannon"), title = "Diveristy of Species 2018")
+
+plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), color = "Species2.x", title = "Boxplot of Species 2018")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons18_Species, label = "p.signif", symnum.args = symnum.args18)
+
+
+# Pea crabs and Sites 
+plot_richness(physeq_class17, x= "Site.x", color = "Weight_diff", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for 2017") + scale_fill_manual(values=mycolors)
+
+a_my_comparisons17_weight <- list(c("NW", "OY"), c("OY", "SW"))
+symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Weight_diff", title = "Boxplot of Weight 2018")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17_weight, label = "p.signif", symnum.args = symnum.args17)
 
 #Question 3 ####
-#Weight pre and post with peacrabs
 
 #Adding new column for average weight
 
@@ -254,13 +283,21 @@ write.csv(meta17_data, file = "Data/meta17_data_update.csv")
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
 
 # Analysis 
-
-ggplot(meta17_data, mapping = aes(x=Weight_avg, y=peacrabs.x)) + geom_point()
+?geom_errorbar
 
 plot_bar(physeq_class17, "Weight_avg", fill="peacrabs.x", facet_grid=~Site.x) #add scaling to maybe see better
 
-plot_bar(physeq_class17, x="Site.x", fill="peacrabs.x")
+#Weight difference with pea crabs
+ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
+  geom_point(alpha =.3,aes(color= as.factor(peacrabs.x))) # Point graph with pea crabs and weight
 
+ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
+  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x))) # Jitter plot with pea crabs and weight
 
+ggplot(meta17_data, aes(x=Site.x, y= Height_diff))+
+  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x)))# Jitter plot with pea crabs and height
+
+ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
+  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x)))# Jitter plot with pea crabs and length
 
 
