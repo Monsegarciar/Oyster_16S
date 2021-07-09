@@ -6,8 +6,6 @@
 
 BiocManager::install("DESeq2")
 
-install.packages("DESeq2")
-?DESeq2
 #Packages Required
 require(phyloseq)
 require(ggplot2)
@@ -17,8 +15,9 @@ library("ggpubr")
 library(dplyr)
 library(tidyr)
 
-require("DESeq2")
-packageVersion("DESeq2")
+library(DESeq2)
+require(DESeq2)
+
 # Loading data 
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -305,7 +304,7 @@ ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x)) # Jitter plot and slpit graphs with pea crabs and weight
 
 ggplot(meta17_data, aes(x=Site.x, y= Height_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)# Jitter plot with pea crabs and height
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x))# Jitter plot with pea crabs and height
 
 ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)# Jitter plot with pea crabs and length
@@ -333,6 +332,5 @@ ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
 
 physeq_class17
 head(sample_data(physeq_class17)$Site.x)
-# Get error: Warning in install.packages :
-#package ‘DESeq2’ is not available (for R version 4.0.2)
+
 
