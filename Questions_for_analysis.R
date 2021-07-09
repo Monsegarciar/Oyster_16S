@@ -2,6 +2,12 @@
 # 2021-06-23
 # Author: Monse Garcia
 
+# Downloading DESeq2
+
+BiocManager::install("DESeq2")
+
+install.packages("DESeq2")
+?DESeq2
 #Packages Required
 require(phyloseq)
 require(ggplot2)
@@ -11,6 +17,8 @@ library("ggpubr")
 library(dplyr)
 library(tidyr)
 
+require("DESeq2")
+packageVersion("DESeq2")
 # Loading data 
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -130,9 +138,9 @@ plot_richness(physeq_class17, x="Site.x", measures=c("Shannon", "Simpson"), colo
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
-a_my_comparisons17 <- list(c("NW", "OY", "SW"))
+a_my_comparisons17 <- list(c("NW", "OY"), c("OY", "SW"), c("NW", "SW"))
 symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
-?symnum
+
 plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x", title = "Boxplot of Sites 2017")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -148,7 +156,7 @@ plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon", "Simpson"), col
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
-a_my_comparisons18 <- list(c("HIGH_MONO", "HIGH_POLY"), c("LOW_MONO", "LOW_POLY"), c("HIGH_POLY", "LOW_MONO"))
+a_my_comparisons18 <- list(c("HIGH_MONO", "HIGH_POLY"), c("LOW_MONO", "LOW_POLY"), c("HIGH_POLY", "LOW_MONO"), c("HIGH_MONO", "LOW_POLY"), c("HIGH_MONO", "LOW_MONO"), c("HIGH_POLY", "LOW_POLY"))
 symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
 plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon","Simpson"), color = "Bucket2", title = "Boxplot of Treatments 2018")+
@@ -186,9 +194,9 @@ plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), c
 
 
 # Pea crabs and Sites 
-plot_richness(physeq_class17, x= "Site.x", color = "Weight_diff", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for 2017") + scale_fill_manual(values=mycolors)
+plot_richness(physeq_class17, x= "Site.x", color = "Weight_diff", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for 2017") 
 
-a_my_comparisons17_weight <- list(c("NW", "OY"), c("OY", "SW"))
+a_my_comparisons17_weight <- list(c("NW", "OY"), c("OY", "SW"), c("NW", "SW"))
 symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
 plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Weight_diff", title = "Boxplot of Weight 2018")+
@@ -288,16 +296,43 @@ write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
 plot_bar(physeq_class17, "Weight_avg", fill="peacrabs.x", facet_grid=~Site.x) #add scaling to maybe see better
 
 #Weight difference with pea crabs
+
+#2017 Data
 ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
-  geom_point(alpha =.3,aes(color= as.factor(peacrabs.x))) # Point graph with pea crabs and weight
+  geom_point(alpha =.3,aes(color= as.factor(peacrabs.x))) + facet_grid(rows = vars(peacrabs.x)) # Point graph with pea crabs and weight
 
 ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
-  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x))) # Jitter plot with pea crabs and weight
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x)) # Jitter plot and slpit graphs with pea crabs and weight
 
 ggplot(meta17_data, aes(x=Site.x, y= Height_diff))+
-  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x)))# Jitter plot with pea crabs and height
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)# Jitter plot with pea crabs and height
 
 ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
-  geom_jitter(alpha =.3,aes(color= as.factor(peacrabs.x)))# Jitter plot with pea crabs and length
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)# Jitter plot with pea crabs and length
 
+ggplot(meta17_data, aes(x=Site.x, y= Width_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)
+
+#2018 Data
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
+  geom_point(alpha =.5,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)  # Point graph with RFTM score and weight
+
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)+ facet_grid(rows = vars(Species2.x)) # Jitter plot with RFTM score and weight
+
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Height_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x)) # Jitter plot with RFTM score and height
+
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Length_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x))# Jitter plot with RFTM score and length
+
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x))#Jitter plot with RFTM score and width 
+
+# DESeq 2 ####
+
+physeq_class17
+head(sample_data(physeq_class17)$Site.x)
+# Get error: Warning in install.packages :
+#package ‘DESeq2’ is not available (for R version 4.0.2)
 
