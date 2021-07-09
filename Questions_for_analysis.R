@@ -14,9 +14,8 @@ require(RColorBrewer)
 library("ggpubr")
 library(dplyr)
 library(tidyr)
-
 library(DESeq2)
-require(DESeq2)
+
 
 # Loading data 
 
@@ -331,6 +330,11 @@ ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
 # DESeq 2 ####
 
 physeq_class17
-head(sample_data(physeq_class17)$Site.x)
+head(sample_data(physeq_class17)$Treatment2)
+
+deseq17 = phyloseq_to_deseq2(physeq_class17, ~ Treatment2)
+deseq17 = DESeq(deseq17, test="Wald", fitType="parametric")
+
+
 
 
