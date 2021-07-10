@@ -332,9 +332,30 @@ ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
 physeq_class17
 head(sample_data(physeq_class17)$Treatment2)
 
-deseq17 = phyloseq_to_deseq2(physeq_class17, ~ Treatment2)
+deseq17 = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
 deseq17 = DESeq(deseq17, test="Wald", fitType="parametric")
 
+res17 = results(deseq17, cooksCutoff = FALSE)
+alpha = 0.01
+sigtab = res17[which(res17$padj > alpha), ]
+sigtab = cbind(as(sigtab, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab), ], "matrix"))
+head(sigtab)
 
+dim(sigtab)
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+  }
+x = tapply(sigtab$log2FoldChange, sigtab$Phylum, function(x) max(x))
+x = sort(x, TRUE)
+sigtab$Phylum = factor(as.character(sigtab$Phylum), levels=names(x))
+
+x = tapply(sigtab$log2FoldChange, sigtab$Genus, function(x) max(x))
+x = sort(x, TRUE)
+
+sigtab$Genus = factor(as.character(sigtab$Genus), levels=names(x))
+ggplot(sigtab, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
 
