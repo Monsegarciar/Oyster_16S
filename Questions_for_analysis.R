@@ -335,30 +335,30 @@ ggplot(meta17_data, aes(x=Treatment2, y= Weight_diff))+
 
 physeq_class17
 head(sample_data(physeq_class17)$Treatment2)
-
+physeq_class17= subset_samples(physeq_class17, )
 # RFTM SCORE with DESeq2- 2017 Data
 deseq17_score = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
 deseq17_score = DESeq(deseq17_score, test="Wald", fitType="parametric")
 
 res17_score = results(deseq17_score, cooksCutoff = FALSE)
-alpha = 0.01
-sigtab17_score = res17_score[which(res17_score$padj > alpha), ]
+alpha = 0.05 # switch to 0.05- generalized linear models
+sigtab17_score = res17_score[which(res17_score$padj < alpha), ]
 sigtab17_score = cbind(as(sigtab17_score, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_score), ], "matrix"))
 
 theme_set(theme_bw())
 scale_fill_discrete <- function(palname = "Set1", ...) {
   scale_fill_brewer(palette = palname, ...)
   }
-x = tapply(sigtab17_score$log2FoldChange, sigtab17_score$Phylum, function(x) max(x))
-x = sort(x, TRUE)
-sigtab17_score$Phylum = factor(as.character(sigtab17_score$Phylum), levels=names(x))
-
 x = tapply(sigtab17_score$log2FoldChange, sigtab17_score$Genus, function(x) max(x))
 x = sort(x, TRUE)
-
-
 sigtab17_score$Genus = factor(as.character(sigtab17_score$Genus), levels=names(x))
-ggplot(sigtab17_score, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+
+x = tapply(sigtab17_score$log2FoldChange, sigtab17_score$Class, function(x) max(x))
+x = sort(x, TRUE)
+head(sigtab17_score)
+
+sigtab17_score$Class = factor(as.character(sigtab17_score$Class), levels=names(x))
+ggplot(sigtab17_score, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
 # RFTM score with DESeq2- 2018 Data
@@ -369,7 +369,7 @@ deseq18_score = DESeq(deseq18_score, test="Wald", fitType="parametric") # Get er
 
 res18_score = results(deseq18_score, cooksCutoff = FALSE)
 alpha = 0.01
-sigtab18_score = res18_score[which(res18_score$padj > alpha), ]
+sigtab18_score = res18_score[which(res18_score$padj < alpha), ]
 sigtab18_score = cbind(as(sigtab18_score, "data.frame"), as(tax_table(physeq_class18)[rownames(sigtab18_score), ], "matrix"))
 
 theme_set(theme_bw())
