@@ -289,7 +289,6 @@ write.csv(meta17_data, file = "Data/meta17_data_update.csv")
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
 
 # Analysis 
-?geom_errorbar
 
 plot_bar(physeq_class17, "Weight_avg", fill="peacrabs.x", facet_grid=~Site.x) #add scaling to maybe see better
 
@@ -297,65 +296,94 @@ plot_bar(physeq_class17, "Weight_avg", fill="peacrabs.x", facet_grid=~Site.x) #a
 
 #2017 Data
 ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
-  geom_point(alpha =.3,aes(color= as.factor(peacrabs.x))) + facet_grid(rows = vars(peacrabs.x)) # Point graph with pea crabs and weight
+  geom_point(alpha =.3,aes(color= peacrabs.x)) + facet_grid(rows = vars(peacrabs.x)) # Point graph with pea crabs and weight
 
 ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x)) # Jitter plot and slpit graphs with pea crabs and weight
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free") # Jitter plot and slpit graphs with pea crabs and weight
 
 ggplot(meta17_data, aes(x=Site.x, y= Height_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x))# Jitter plot with pea crabs and height
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and height
 
 ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)# Jitter plot with pea crabs and length
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and length
 
 ggplot(meta17_data, aes(x=Site.x, y= Width_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0)
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and width
 
 #2018 Data
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
   geom_point(alpha =.5,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)  # Point graph with RFTM score and weight
 
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)+ facet_grid(rows = vars(Species2.x)) # Jitter plot with RFTM score and weight
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)+ facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free") # Jitter plot with RFTM score and weight
 
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Height_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x)) # Jitter plot with RFTM score and height
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free") # Jitter plot with RFTM score and height
 
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Length_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x))# Jitter plot with RFTM score and length
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free")# Jitter plot with RFTM score and length
 
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
-  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x))#Jitter plot with RFTM score and width 
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free") #Jitter plot with RFTM score and width 
 
+# X-axis being the Treatment type- 2017 Data
+ggplot(meta17_data, aes(x=Treatment2, y= Weight_diff))+
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free") # Jitter plot and slpit graphs with pea crabs and weight
+
+?plot_richness
 # DESeq 2 ####
 
 physeq_class17
 head(sample_data(physeq_class17)$Treatment2)
 
-deseq17 = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
-deseq17 = DESeq(deseq17, test="Wald", fitType="parametric")
+# RFTM SCORE with DESeq2- 2017 Data
+deseq17_score = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
+deseq17_score = DESeq(deseq17_score, test="Wald", fitType="parametric")
 
-res17 = results(deseq17, cooksCutoff = FALSE)
+res17_score = results(deseq17_score, cooksCutoff = FALSE)
 alpha = 0.01
-sigtab = res17[which(res17$padj > alpha), ]
-sigtab = cbind(as(sigtab, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab), ], "matrix"))
-head(sigtab)
-
-dim(sigtab)
+sigtab17_score = res17_score[which(res17_score$padj > alpha), ]
+sigtab17_score = cbind(as(sigtab17_score, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_score), ], "matrix"))
 
 theme_set(theme_bw())
 scale_fill_discrete <- function(palname = "Set1", ...) {
   scale_fill_brewer(palette = palname, ...)
   }
-x = tapply(sigtab$log2FoldChange, sigtab$Phylum, function(x) max(x))
+x = tapply(sigtab17_score$log2FoldChange, sigtab17_score$Phylum, function(x) max(x))
 x = sort(x, TRUE)
-sigtab$Phylum = factor(as.character(sigtab$Phylum), levels=names(x))
+sigtab17_score$Phylum = factor(as.character(sigtab17_score$Phylum), levels=names(x))
 
-x = tapply(sigtab$log2FoldChange, sigtab$Genus, function(x) max(x))
+x = tapply(sigtab17_score$log2FoldChange, sigtab17_score$Genus, function(x) max(x))
 x = sort(x, TRUE)
 
-sigtab$Genus = factor(as.character(sigtab$Genus), levels=names(x))
-ggplot(sigtab, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+
+sigtab17_score$Genus = factor(as.character(sigtab17_score$Genus), levels=names(x))
+ggplot(sigtab17_score, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
+# RFTM score with DESeq2- 2018 Data
+estimateSizeFactors(physeq_class18, type = 'iterate')
 
+deseq18_score = phyloseq_to_deseq2(physeq_class18, ~ RFTM_score.x)
+deseq18_score = DESeq(deseq18_score, test="Wald", fitType="parametric") # Get error: Error in estimateSizeFactorsForMatrix(counts(object), locfunc = locfunc,  : every gene contains at least one zero, cannot compute log geometric means
+
+res18_score = results(deseq18_score, cooksCutoff = FALSE)
+alpha = 0.01
+sigtab18_score = res18_score[which(res18_score$padj > alpha), ]
+sigtab18_score = cbind(as(sigtab18_score, "data.frame"), as(tax_table(physeq_class18)[rownames(sigtab18_score), ], "matrix"))
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+x = tapply(sigtab18_score$log2FoldChange, sigtab18_score$Phylum, function(x) max(x))
+x = sort(x, TRUE)
+sigtab18_score$Phylum = factor(as.character(sigtab18_score$Phylum), levels=names(x))
+
+x = tapply(sigtab18_score$log2FoldChange, sigtab18_score$Genus, function(x) max(x))
+x = sort(x, TRUE)
+
+
+sigtab18_score$Genus = factor(as.character(sigtab18_score$Genus), levels=names(x))
+ggplot(sigtab18_score, aes(x=Genus, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
