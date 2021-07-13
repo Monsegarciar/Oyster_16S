@@ -336,12 +336,13 @@ ggplot(meta17_data, aes(x=Treatment2, y= Weight_diff))+
 physeq_class17
 head(sample_data(physeq_class17)$Treatment2)
 physeq_class17= subset_samples(physeq_class17, )
+
 # RFTM SCORE with DESeq2- 2017 Data
 deseq17_score = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
 deseq17_score = DESeq(deseq17_score, test="Wald", fitType="parametric")
 
 res17_score = results(deseq17_score, cooksCutoff = FALSE)
-alpha = 0.05 # switch to 0.05- generalized linear models
+alpha = 0.01 # switch to 0.05- generalized linear models
 sigtab17_score = res17_score[which(res17_score$padj < alpha), ]
 sigtab17_score = cbind(as(sigtab17_score, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_score), ], "matrix"))
 
@@ -361,11 +362,68 @@ sigtab17_score$Class = factor(as.character(sigtab17_score$Class), levels=names(x
 ggplot(sigtab17_score, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
+# Peacrabs with DESeq2- 2017 Data
+deseq17_pea = phyloseq_to_deseq2(physeq_class17, ~ peacrabs.x)
+deseq17_pea = DESeq(deseq17_pea, test="Wald", fitType="parametric")
+
+res17_pea = results(deseq17_pea, cooksCutoff = FALSE)
+alpha = 0.05
+sigtab17_pea = res17_pea[which(res17_pea$padj < alpha), ]
+sigtab17_pea = cbind(as(sigtab17_pea, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_pea), ], "matrix"))
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+x = tapply(sigtab17_pea$log2FoldChange, sigtab17_pea$Genus, function(x) max(x))
+x = sort(x, TRUE)
+sigtab17_pea$Genus = factor(as.character(sigtab17_pea$Genus), levels=names(x))
+
+x = tapply(sigtab17_pea$log2FoldChange, sigtab17_pea$Class, function(x) max(x))
+x = sort(x, TRUE)
+
+
+sigtab17_pea$Class = factor(as.character(sigtab17_pea$Class), levels=names(x))
+
+ggplot(sigtab17_pea, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
+
+# Average Weight with DESeq2- 2017 Data
+physeq_class17 = subset_samples(physeq_class17, Weight_avg != "NA")
+
+deseq17_weight = phyloseq_to_deseq2(physeq_class17, ~ Weight_avg)
+deseq17_weight = DESeq(deseq17_weight, test="Wald", fitType="parametric")
+
+res17_weight = results(deseq17_weight, cooksCutoff = FALSE)
+alpha = 0.05 # switch to 0.05- generalized linear models
+sigtab17_weight = res17_weight[which(res17_weight$padj < alpha), ]
+sigtab17_weight = cbind(as(sigtab17_weight, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_weight), ], "matrix"))
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+x = tapply(sigtab17_weight$log2FoldChange, sigtab17_weight$Genus, function(x) max(x))
+x = sort(x, TRUE)
+sigtab17_weight$Genus = factor(as.character(sigtab17_weight$Genus), levels=names(x))
+
+x = tapply(sigtab17_weight$log2FoldChange, sigtab17_weight$Class, function(x) max(x))
+x = sort(x, TRUE)
+
+
+sigtab17_weight$Class = factor(as.character(sigtab17_weight$Class), levels=names(x))
+
+ggplot(sigtab17_weight, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
+
 # RFTM score with DESeq2- 2018 Data
 estimateSizeFactors(physeq_class18, type = 'iterate')
 
-deseq18_score = phyloseq_to_deseq2(physeq_class18, ~ RFTM_score.x)
+physeq_class18 = subset_samples(physeq_class18, Weight_avg18 != "NA")
+
+deseq18_score = phyloseq_to_deseq2(physeq_class18, ~ Weight_avg18)
 deseq18_score = DESeq(deseq18_score, test="Wald", fitType="parametric") # Get error: Error in estimateSizeFactorsForMatrix(counts(object), locfunc = locfunc,  : every gene contains at least one zero, cannot compute log geometric means
+#troubleshoot: https://help.galaxyproject.org/t/error-with-deseq2-every-gene-contains-at-least-one-zero/564
 
 res18_score = results(deseq18_score, cooksCutoff = FALSE)
 alpha = 0.01
