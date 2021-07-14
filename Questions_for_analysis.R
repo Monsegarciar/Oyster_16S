@@ -309,6 +309,19 @@ ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
 
 ggplot(meta17_data, aes(x=Site.x, y= Width_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and width
+# 2017 Weight Average
+ggplot(meta17_data, aes(x=Site.x, y= Weight_avg))+
+  geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free") + labs(x= "Sites", y= "Average Weight", title = "Average weight and Sites with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
+
+# Diana's Samples with average Weight
+peacrabs17 <- meta17_data[rownames(meta17_data) %in% c("11", "12","100", "8", "108","41", "48","55","71"),]
+
+ggplot(peacrabs17, aes(x=Site.x, y= Weight_avg))+
+  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(RFTM_score.x), scales = "free") + labs(x= "Site", y= "Average Weight", title = "Average weight with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
+
+#Height and Weight
+ggplot(peacrabs17, aes(x=Height_avg, y= Weight_avg))+
+  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(Site.x), scales = "free") + labs(x= "Average Height", y= "Average Weight", title = "Average Weight and Height with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
 
 #2018 Data
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
@@ -330,7 +343,11 @@ ggplot(meta_gen18_data, aes(x=Bucket2, y= Width_diff))+
 ggplot(meta17_data, aes(x=Treatment2, y= Weight_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free") # Jitter plot and slpit graphs with pea crabs and weight
 
-?plot_richness
+# 2018 Weight Average
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_avg18))+
+  geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)+ facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free") + labs(x= "Treatments", y= "Average Weight", title = "Average weight and Treatments with Species", caption = "2018 Data") # Jitter plot with RFTM score and weight
+
+
 # DESeq 2 ####
 
 physeq_class17
