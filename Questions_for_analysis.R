@@ -204,17 +204,18 @@ plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color
 
 #Question 3 ####
 
+
 #Adding new column for average weight
 
 #2017 Data
 weight_pre <- as.numeric(meta17_data$Weight_pre)
 
 meta17_data <- meta17_data %>%
-  mutate(Weight_avg= (Weight_post- weight_pre)/ weight_pre)
+  mutate(Weight_delta= (Weight_post- weight_pre)/ weight_pre)
 
 #2018 Data
 meta_gen18_data <- meta_gen18_data %>%
-  mutate(Weight_avg18= (Weight_post- Weight)/ Weight)
+  mutate(Weight_delta= (Weight_post- Weight)/ Weight)
 
 # Adding new column for averages in length, width, height
 
@@ -222,28 +223,28 @@ meta_gen18_data <- meta_gen18_data %>%
 height_pre <- as.numeric(meta17_data$Height_pre)
 
 meta17_data <- meta17_data %>%
-  mutate(Height_avg= (Height_post- height_pre)/ height_pre)
+  mutate(Height_delta= (Height_post- height_pre)/ height_pre)
 
 width_pre <- as.numeric(meta17_data$Width_pre)
 
 meta17_data <- meta17_data %>%
-  mutate(Width_avg= (Width_post- width_pre)/ width_pre)
+  mutate(Width_delta= (Width_post- width_pre)/ width_pre)
 
 length_pre <- as.numeric(meta17_data$Length_pre)
 
 meta17_data <- meta17_data %>%
-  mutate(Length_avg= (Length_post- length_pre)/ length_pre)
+  mutate(Length_delta= (Length_post- length_pre)/ length_pre)
 
 
 #2018 Data
 meta_gen18_data <- meta_gen18_data %>%
-  mutate(Height_avg= (Height_post- Height_pre)/ Height_pre)
+  mutate(Height_delta= (Height_post- Height_pre)/ Height_pre)
 
 meta_gen18_data <- meta_gen18_data %>%
-  mutate(Width_avg= (Width_post- Width_pre)/ Width_pre)
+  mutate(Width_delta= (Width_post- Width_pre)/ Width_pre)
 
 meta_gen18_data <- meta_gen18_data %>%
-  mutate(Length_avg= (Length_post- Length_pre)/ Length_pre)
+  mutate(Length_delta= (Length_post- Length_pre)/ Length_pre)
 
 # Adding Columns with weight, length, height, width differences
 
@@ -284,6 +285,10 @@ meta_gen18_data <- meta_gen18_data %>%
 meta17_data <- subset(meta17_data, select = -c(X.1, X, X.2, Number.x, Number.y))
 meta_gen18_data <- subset(meta_gen18_data, select = -c(X, X.1, X.2))
 
+# Removing columns with Average
+meta17_data <- subset(meta17_data, select = -c(Weight_avg,Height_avg,Width_avg,Length_avg))
+meta_gen18_data <- subset(meta_gen18_data, select = -c(Weight_avg18, Height_avg, Width_avg, Length_avg))
+
 #Saving new data
 write.csv(meta17_data, file = "Data/meta17_data_update.csv")
 write.csv(meta_gen18_data, file = "Data/metagenetics_data18.csv")
@@ -316,12 +321,12 @@ ggplot(meta17_data, aes(x=Site.x, y= Weight_avg))+
 # Diana's Samples with average Weight
 peacrabs17 <- meta17_data[rownames(meta17_data) %in% c("11", "12","100", "8", "108","41", "48","55","71"),]
 
-ggplot(peacrabs17, aes(x=Site.x, y= Weight_avg))+
-  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(RFTM_score.x), scales = "free") + labs(x= "Site", y= "Average Weight", title = "Average weight with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
+ggplot(peacrabs17, aes(x=Site.x, y= Weight_delta))+
+  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(RFTM_score.x), scales = "free") + labs(x= "Site", y= "Normalized Weight", title = "Normalized weight with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
 
 #Height and Weight
-ggplot(peacrabs17, aes(x=Height_avg, y= Weight_avg))+
-  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(Site.x), scales = "free") + labs(x= "Average Height", y= "Average Weight", title = "Average Weight and Height with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
+ggplot(peacrabs17, aes(x=Height_delta, y= Weight_delta))+
+  geom_jitter(alpha =.8,aes(color= UniqueID)) + facet_grid(cols = vars(Site.x), scales = "free") + labs(x= "Normalized Height", y= "Normalized Weight", title = "Normalized Weight and Height with Peacrabs", caption = "2017 Data") # Jitter plot and slpit graphs with pea crabs and weight
 
 #2018 Data
 ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_diff))+
@@ -344,7 +349,7 @@ ggplot(meta17_data, aes(x=Treatment2, y= Weight_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x))) + geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free") # Jitter plot and slpit graphs with pea crabs and weight
 
 # 2018 Weight Average
-ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_avg18))+
+ggplot(meta_gen18_data, aes(x=Bucket2, y= Weight_delta))+
   geom_jitter(alpha =.8,aes(color= as.factor(RFTM_score.y))) + geom_boxplot(alpha=0)+ facet_grid(rows = vars(Species2.x), cols = vars(Bucket2), scales = "free") + labs(x= "Treatments", y= "Average Weight", title = "Average weight and Treatments with Species", caption = "2018 Data") # Jitter plot with RFTM score and weight
 
 
@@ -359,7 +364,7 @@ deseq17_score = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
 deseq17_score = DESeq(deseq17_score, test="Wald", fitType="parametric")
 
 res17_score = results(deseq17_score, cooksCutoff = FALSE)
-alpha = 0.01 # switch to 0.05- generalized linear models
+alpha = 0.05 # switch to 0.05- generalized linear models
 sigtab17_score = res17_score[which(res17_score$padj < alpha), ]
 sigtab17_score = cbind(as(sigtab17_score, "data.frame"), as(tax_table(physeq_class17)[rownames(sigtab17_score), ], "matrix"))
 
@@ -406,9 +411,9 @@ ggplot(sigtab17_pea, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
 # Average Weight with DESeq2- 2017 Data
-physeq_class17 = subset_samples(physeq_class17, Weight_avg != "NA")
+physeq_class17 = subset_samples(physeq_class17, Weight_delta != "NA")
 
-deseq17_weight = phyloseq_to_deseq2(physeq_class17, ~ Weight_avg)
+deseq17_weight = phyloseq_to_deseq2(physeq_class17, ~ Weight_delta)
 deseq17_weight = DESeq(deseq17_weight, test="Wald", fitType="parametric")
 
 res17_weight = results(deseq17_weight, cooksCutoff = FALSE)
@@ -432,6 +437,7 @@ sigtab17_weight$Class = factor(as.character(sigtab17_weight$Class), levels=names
 
 ggplot(sigtab17_weight, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
+
 
 # RFTM score with DESeq2- 2018 Data
 estimateSizeFactors(physeq_class18, type = 'iterate')
