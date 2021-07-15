@@ -18,14 +18,8 @@ library(DESeq2)
 meta17_data <- read.csv("Data/meta17_data_update.csv")
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 
-meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
-asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
-
-
-
 #Loading Physeq w/out transform_sample_counts() function ####
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
-physeq_class18 <- readRDS("Data/physeq_class18.rds")
 
 
 # Normalized Weight with DESeq2- 2017 Data ####
