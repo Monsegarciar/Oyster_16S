@@ -67,6 +67,9 @@ physeq_count17
 saveRDS(physeq_class17, "Data/physeq_class17.rds")
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
 
+saveRDS(physeq_count17, "Data/physeq_count17.rds")
+physeq_count17 <- readRDS("Data/physeq_count17.rds")
+
 # "phyloseq_class" Analysis ####
 
 #NMDS Graph ####
