@@ -147,7 +147,8 @@ otu_weight = sigtab17_weight %>%
 head(otu_weight)
 ?subset_samples
 physeq_class17_weight = subset_taxa(physeq_class17, Class==otu_weight)
-
+physeq_class17_weight = subset_samples(physeq_class17_weight)
+physeq_class17_weight
 physeq_class17
 
 plot_bar(physeq_class17_weight)
