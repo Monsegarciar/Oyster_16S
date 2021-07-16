@@ -7,12 +7,13 @@ require(phyloseq)
 require(ggplot2)
 library(data.table)
 require(RColorBrewer)
+require(genefilter)
 library("ggpubr")
 library(dplyr)
 library(tidyr)
 library(DESeq2)
 
-
+?genefilter
 # Loading data ####
 
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
@@ -27,8 +28,13 @@ physeq_count18 <- readRDS("Data/physeq_count18.rds")
 # Normalized Weight with DESeq2- 2018 Data
 physeq_class18 = subset_samples(physeq_class18, Weight_delta != "NA")
 
-deseq18_weight = phyloseq_to_deseq2(physeq_count18, ~ Weight_delta)
+deseq18_weight = phyloseq_to_deseq2(physeq_class18, ~ Weight_delta)
 deseq18_weight = DESeq(deseq18_weight, test="Wald", fitType="parametric") 
+
+gm_mean=function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
+geoMeans = apply(OTU18, 1, gm_mean)
+dds = estimateSizeFactors(deseq18_weight, geoMeans=geoMeans, locfunc=shorth)
+View(OTU18)
 
 res18_weight = results(deseq18_weight, cooksCutoff = FALSE)
 alpha = 0.01
