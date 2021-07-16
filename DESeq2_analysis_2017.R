@@ -139,4 +139,15 @@ sigtab17_width$Class = factor(as.character(sigtab17_width$Class), levels=names(x
 ggplot(sigtab17_width, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
+# Taking out the OTU's ####
 
+# Weight OTU's
+otu_weight = sigtab17_weight %>% 
+  select(Kingdom, Phylum, Class, Order, Family, Genus)
+head(otu_weight)
+?subset_samples
+physeq_class17_weight = subset_taxa(physeq_class17, Class==otu_weight)
+
+physeq_class17
+
+plot_bar(physeq_class17_weight)
