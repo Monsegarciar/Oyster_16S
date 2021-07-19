@@ -20,7 +20,7 @@ asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 
 #Loading Physeq w/out transform_sample_counts() function ####
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
-
+physeq_class17
 
 # Normalized Weight with DESeq2- 2017 Data ####
 physeq_class17 = subset_samples(physeq_class17, Weight_delta != "NA")
@@ -144,11 +144,9 @@ ggplot(sigtab17_width, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_poin
 # Weight OTU's
 otu_weight = sigtab17_weight %>% 
   select(Kingdom, Phylum, Class, Order, Family, Genus)
-head(otu_weight)
-?subset_samples
-physeq_class17_weight = subset_taxa(physeq_class17, Class==otu_weight)
-physeq_class17_weight = subset_samples(physeq_class17_weight)
-physeq_class17_weight
-physeq_class17
 
-plot_bar(physeq_class17_weight)
+# Plot bar for Weight OTU's
+plot_bar(physeq_class17_weight) # get all the samples not just the ones coresponding to the taxa
+
+
+
