@@ -15,10 +15,11 @@ meta17_data <- read.csv("Data/meta17_data_update.csv")
 
 
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
-Run23_taxa <- fread("Data/Run23_taxa - Copy.csv")
+Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 
 #Changing row names in "Run23_taxa"
-rownames(Run23_taxa)= Run23_taxa$V1
+Run123_taxa$V1=NULL
+rownames(Run123_taxa)= Run123_taxa$V2
 head(rownames(Run23_taxa))
 
 #Changing row names in "meta_17" data
@@ -34,15 +35,16 @@ head(rownames(asvtable_17))
 
 
 #Setting taxmat and otumat
-taxmat17=Run23_taxa
+taxmat17=Run123_taxa
+taxmat17=Run123_taxa[-c(1)]
 otumat17=asvtable_17
 
 #Converting to matrix
 otu_matrix17= as.matrix(otumat17, rownames = rownames(asvtable_17))
 
-tax_matrix17=as.matrix(taxmat17, rownames = "V1")
+tax_matrix17=as.matrix(taxmat17, rownames = "V2")
 colnames(tax_matrix17) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
-                         "Genus")
+                         "Genus.x", "Genus.y", "Species")
 meta17_data=as.data.frame(meta17_data)
 
 #Setting OTU, TAX, and SAMP

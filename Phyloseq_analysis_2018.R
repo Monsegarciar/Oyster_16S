@@ -14,11 +14,12 @@ library(dplyr)
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
 
 asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
-Run23_taxa <- fread("Data/Run23_taxa - Copy.csv")
+Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 
-#Changing row names in "Run23_taxa"
-rownames(Run23_taxa)= Run23_taxa$V1
-head(rownames(Run23_taxa))
+#Changing row names in "Run123_taxa"
+Run123_taxa$V1=NULL
+rownames(Run123_taxa)= Run123_taxa$V2
+head(rownames(Run123_taxa))
 
 #Changing row names in meta_gen18 data
 rownames(meta_gen18_data)= meta_gen18_data$UniqueID 
@@ -29,15 +30,16 @@ rownames(asvtable_18)= asvtable_18$V1
 head(rownames(asvtable_18))
 
 #Setting taxmat and otumat
-taxmat18=Run23_taxa
+taxmat18=Run123_taxa
+taxmat18=Run123_taxa[-c(1)]
 otumat18=asvtable_18
 
 #Converting to matrix
 otu_matrix18= as.matrix(otumat18, rownames = "V1")
 
-tax_matrix18=as.matrix(taxmat18, rownames = "V1")
+tax_matrix18=as.matrix(taxmat18, rownames = "V2")
 colnames(tax_matrix18) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
-                          "Genus")
+                          "Genus.x", "Genus.y", "Species")
 meta_gen18_data=as.data.frame(meta_gen18_data)
 
 #Setting OTU, TAX, and SAMP

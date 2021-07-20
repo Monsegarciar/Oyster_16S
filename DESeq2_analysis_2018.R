@@ -8,11 +8,13 @@ require(ggplot2)
 library(data.table)
 require(RColorBrewer)
 require(genefilter)
+library(genefilter)
 library("ggpubr")
 library(dplyr)
 library(tidyr)
 library(DESeq2)
 
+install.packages("genefilter")
 ?genefilter
 # Loading data ####
 
@@ -26,16 +28,18 @@ physeq_count18 <- readRDS("Data/physeq_count18.rds")
 
 
 # Normalized Weight with DESeq2- 2018 Data
-physeq_class18 = subset_samples(physeq_class18, Weight_delta != "NA")
+physeq_count18 = subset_samples(physeq_count18, Weight_delta != "NA")
 
-deseq18_weight = phyloseq_to_deseq2(physeq_class18, ~ Weight_delta)
-deseq18_weight = DESeq(deseq18_weight, test="Wald", fitType="parametric") 
+deseq18_weight = phyloseq_to_deseq2(physeq_count18, ~ Weight_delta)
+#deseq18_weight = DESeq(deseq18_weight, test="Wald", fitType="parametric") 
 
-gm_mean=function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
-geoMeans = apply(OTU18, 1, gm_mean)
-dds = estimateSizeFactors(deseq18_weight, geoMeans=geoMeans, locfunc=shorth)
-View(OTU18)
+gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
+geoMeans = apply(OTU_count18, 1, gm_mean)
+deseq18_weight = estimateSizeFactors(deseq18_weight, geoMeans=geoMeans, locfunc=shorth)
 
+dim(deseq18_weight)
+dim(OTU18)
+View(deseq18_weight)
 res18_weight = results(deseq18_weight, cooksCutoff = FALSE)
 alpha = 0.01
 sigtab18_weight = res18_weight[which(res18_weight$padj < alpha), ]
