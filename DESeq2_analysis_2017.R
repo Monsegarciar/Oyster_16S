@@ -142,15 +142,21 @@ sigtab17_width$Class = factor(as.character(sigtab17_width$Class), levels=names(x
 ggplot(sigtab17_width, aes(x=Genus.x, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
-# Taking out the OTU's ####
+# Taking out the significant OTU's ####
 
-# Weight OTU's
+# Weight
 otu_weight = sigtab17_weight %>% 
   select(Kingdom, Phylum, Class, Order, Family, Genus.x, Genus.y, Species)
 
-# Plot bar for Weight OTU's
-plot_bar(physeq_class17_weight) # get all the samples not just the ones coresponding to the taxa
 
+# Plot bar for Weight OTU's
+plot_bar(physeq_class17_weight) # get all the samples not just the ones corresponding to the taxa
+
+# Height
+
+# Length
+
+# Width
 
 # sig tab and merge it with taxa and then do a new phyloseq object 
 # prune taxa and keep otu's that are in the sigtab, look at prune taxa

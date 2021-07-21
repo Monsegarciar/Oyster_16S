@@ -31,6 +31,9 @@ asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
 physeq_class18 <- readRDS("Data/physeq_class18.rds")
 
+physeq_count17 <- readRDS("Data/physeq_count17.rds")
+physeq_count18 <- readRDS("Data/physeq_count18.rds")
+
 # Example of code with ColorBrewer
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors
 plot_bar(pp.ch,  fill="Category", x="Replicate") +
@@ -55,7 +58,7 @@ plot_bar(pp.ch,  fill="Category", x="Replicate") +
 #Taxonomy bar to see if there are more abundance in one site than the other
 
 #Split Graph with Site and Phylum
-p4= plot_ordination(physeq_class17, Phy.ord, type = "split", 
+p4= plot_ordination(physeq_count17, Phy.ord, type = "split", 
                     color = "Phylum", shape = "Site.x")
 print(p4)
 
@@ -69,9 +72,9 @@ plot_bar(pp.ch) #Plot bar of samples(x) and abundance (y) of Proteobacteria
 bar1=plot_bar(pp.ch, x="Site.x", fill = "Genus")
 print(bar1)
 
-mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(299)
-plot_bar(pp.ch,  fill="Genus", x="Treatment2") +
-  geom_bar(aes(color=Genus, fill=Genus), stat="identity", position="stack")+
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(442)
+plot_bar(pp.ch,  fill="Genus.x", x="Treatment2") +
+  geom_bar(aes(color=Genus.x, fill=Genus.x), stat="identity", position="stack")+
   facet_grid(Site.x~Species.x, scales="free_x")+
   scale_fill_manual(values=mycolors)+
   scale_color_manual(values=mycolors)+
@@ -110,19 +113,18 @@ p_2 + geom_bar(aes(color=Species2.x, fill=Species2.x), stat="identity", position
 # Alpha Diversity Graphics ####
 
 #2017 Data
-?plot_richness
-plot_rich= plot_richness(physeq_class17, x="Site.x", measures=c("Simpson", "Shannon"))
-print(plot_rich)
 
-plot_rich2= plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for Treatment and Species 2017")
-print(plot_rich2)
+plot_richness(physeq_class17, x="Site.x", measures=c("Simpson", "Shannon"))
+
+
+plot_richness(physeq_class17, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for Treatment and Species 2017")
 
 #2018 Data
-plo_rich18= plot_richness(physeq_class18, x="Bucket2", measures=c("Chao1", "Shannon"))
-print(plo_rich18)
+plot_richness(physeq_class18, x="Bucket2", measures=c("Simpson", "Shannon"))
 
-plo_rich_species18= plot_richness(physeq_class18, x="Bucket2", color = "Species2.x",measures=c("Simpson", "Shannon"), title = "Alpha Diveristy for Treatments and Species 2018")
-print(plo_rich_species18)
+
+plot_richness(physeq_class18, x="Bucket2", color = "Species2.x",measures=c("Simpson", "Shannon"), title = "Alpha Diveristy for Treatments and Species 2018")
+
 
 #Standard deviation and mean ####
 

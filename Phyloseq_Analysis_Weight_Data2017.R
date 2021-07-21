@@ -9,6 +9,7 @@ meta17_data <- read.csv("Data/meta17_data_update.csv")
 
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 
+Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 
 #Changing row names in "meta_17" data
 rownames(meta17_data)= meta17_data$UniqueID
@@ -47,8 +48,10 @@ physeq_class17_weight = phyloseq(OTU17_weight, TAX17_weight, SAMP17_weight)
 physeq_class17_weight
 
 # Plot ordination Graphs 
+physeq_class17_weight = subset_samples(physeq_class17_weight, Weight_delta != "NA")
 Phy.ord <- ordinate(physeq_class17_weight, "NMDS", "bray")
 p1= plot_ordination(physeq_class17_weight, Phy.ord, type = "taxa", color = "Phylum", title = "taxa")
+print(p1)
 
 plot_richness(physeq_class17_weight, x="Site.x", measures=c("Simpson", "Shannon"))
 plot_richness(physeq_class17_weight, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"))

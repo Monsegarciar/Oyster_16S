@@ -84,7 +84,7 @@ asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
 
 #Phyloseq analysis
 OTU2=asvtable_18<- fread("Data/asvtable_de18 - Copy.csv")
-TAX2=Run23_taxa <- fread("Data/Run23_taxa - Copy.csv")
+TAX2=Run123_taxa <- fread("Data/Run123_taxa - Copy.csv")
 
 rownames(meta_gen18_data)= meta_gen18_data$UniqueID
 physeq = phyloseq(OTU, TAX, meta_gen18_data)
