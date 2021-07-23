@@ -2,6 +2,9 @@
 # 2021-07-18
 # Author: Monse Garcia
 
+# abundance for otu's in species and clams and save with ggsave####
+# 2018 Data only look at Oysters, any found in both, more starting point ####
+# look for any in 2017 for increased weight and increased length ####
 
 #Loading Data ####
 
@@ -30,6 +33,8 @@ otu_length= sigtab17_length %>%
 
 otu_width = sigtab17_width %>% 
   select(Kingdom, Phylum, Class, Order, Family, Genus.x, Genus.y, Species)
+
+# abundance for otu's in species and clams and save with ggplot####
 
 # Weight Analysis ####
 
@@ -77,8 +82,11 @@ physeq_count17_weight
 saveRDS(physeq_class17_weight, "Data/physeq_class17_weight.rds")
 saveRDS(physeq_count17_weight, "Data/physeq_count17_weight.rds")
 
+physeq_count17_weight <- readRDS("Data/physeq_count17_weight.rds")
+physeq_class17_weight <- readRDS("Data/physeq_class17_weight.rds")
+
 # Plot ordination Graphs 
-physeq_class17_weight = subset_samples(physeq_class17_weight, Weight_delta != "NA")
+physeq_class17_weight = subset_samples(physeq_class17_weight, sam_data(physeq_class17_weight) != "NA")
 Phy.ord <- ordinate(physeq_class17_weight, "NMDS", "bray")
 p1= plot_ordination(physeq_class17_weight, Phy.ord, type = "taxa", color = "Phylum", title = "taxa")
 print(p1)
@@ -94,6 +102,11 @@ plot_richness(physeq_class17_weight, x="Site.x", measures=c("Shannon","Simpson")
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
   stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17_w, label = "p.signif", symnum.args = symnum.args17_w)
+
+plot_ordination(physeq_count17_weight, Phy.ord, type = "split", 
+                color = "Phylum", shape = "Site.x")
+
+ggsave(filename = "Richness Plots", plot=last_plot(), path ="Data2017_plots/", width = 15, height = 8)  
 
 
 # Height Analysis ####

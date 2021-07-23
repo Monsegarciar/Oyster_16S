@@ -43,17 +43,19 @@ scale_fill_discrete <- function(palname = "Set1", ...) {
 }
 dim(sigtab17_weight)
 # Genus 
-x = tapply(sigtab17_weight$log2FoldChange, sigtab17_weight$Genus.x, function(x) max(x))
+x = tapply(sigtab17_weight$log2FoldChange, sigtab17_weight$Phylum, function(x) max(x))
 x = sort(x, TRUE)
-sigtab17_weight$Genus.x = factor(as.character(sigtab17_weight$Genus.x), levels=names(x))
+sigtab17_weight$Phylum = factor(as.character(sigtab17_weight$Phylum), levels=names(x))
 
-#Class
+# Class
 x = tapply(sigtab17_weight$log2FoldChange, sigtab17_weight$Class, function(x) max(x))
 x = sort(x, TRUE)
 sigtab17_weight$Class = factor(as.character(sigtab17_weight$Class), levels=names(x))
 
-ggplot(sigtab17_weight, aes(x=Genus.x, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Weight 2017", x="Genus" )
+ggplot(sigtab17_weight, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Weight- Phylum and Class 2017")
+
+ggsave(filename = "Normalized Weight Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 15, height = 8)  
 
 # Normalized Height with DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Height_delta != "NA")
@@ -76,13 +78,16 @@ x = tapply(sigtab17_height$log2FoldChange, sigtab17_height$Phylum, function(x) m
 x = sort(x, TRUE)
 sigtab17_height$Phylum = factor(as.character(sigtab17_height$Phylum), levels=names(x))
 
-# Genus
-x = tapply(sigtab17_height$log2FoldChange, sigtab17_height$Genus.x, function(x) max(x))
+# Order
+x = tapply(sigtab17_height$log2FoldChange, sigtab17_height$Order, function(x) max(x))
 x = sort(x, TRUE)
-sigtab17_height$Genus.x = factor(as.character(sigtab17_height$Genus.x), levels=names(x))
+sigtab17_height$Order = factor(as.character(sigtab17_height$Order), levels=names(x))
 
-ggplot(sigtab17_height, aes(x=Genus.x, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Height 2017", x="Genus" )
+ggplot(sigtab17_height, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Height- Phylum and Order 2017")
+
+ggsave(filename = "Normalized Height Phylum and Order 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 30, height = 8)  
+
 
 # Normalized Length DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Length_delta != "NA")
@@ -101,17 +106,19 @@ scale_fill_discrete <- function(palname = "Set1", ...) {
   scale_fill_brewer(palette = palname, ...)
 }
 # Genus
-x = tapply(sigtab17_length$log2FoldChange, sigtab17_length$Genus.x, function(x) max(x))
+x = tapply(sigtab17_length$log2FoldChange, sigtab17_length$Phylum, function(x) max(x))
 x = sort(x, TRUE)
-sigtab17_length$Genus.x = factor(as.character(sigtab17_length$Genus.x), levels=names(x))
+sigtab17_length$Phylum = factor(as.character(sigtab17_length$Phylum), levels=names(x))
 
 #Class
 x = tapply(sigtab17_length$log2FoldChange, sigtab17_length$Class, function(x) max(x))
 x = sort(x, TRUE)
 sigtab17_length$Class = factor(as.character(sigtab17_length$Class), levels=names(x))
 
-ggplot(sigtab17_length, aes(x=Genus.x, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Length 2017", x="Genus" )
+ggplot(sigtab17_length, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Length- Phylum and Class 2017")
+
+ggsave(filename = "Normalized Length Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 17, height = 8)  
 
 # Normalized Width DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Width_delta != "NA")
@@ -135,12 +142,15 @@ x = sort(x, TRUE)
 sigtab17_width$Phylum = factor(as.character(sigtab17_width$Phylum), levels=names(x))
 
 # Genus
-x = tapply(sigtab17_width$log2FoldChange, sigtab17_width$Genus.x, function(x) max(x))
+x = tapply(sigtab17_width$log2FoldChange, sigtab17_width$Class, function(x) max(x))
 x = sort(x, TRUE)
-sigtab17_width$Genus.x = factor(as.character(sigtab17_width$Genus.x), levels=names(x))
+sigtab17_width$Class = factor(as.character(sigtab17_width$Class), levels=names(x))
 
-ggplot(sigtab17_width, aes(x=Genus.x, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Width 2017", x= "Genus")
+ggplot(sigtab17_width, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Width- Phylum and Class 2017")
+
+ggsave(filename = "Normalized Width Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 17, height = 8)  
+
 
 # Taking out the significant OTU's ####
 
