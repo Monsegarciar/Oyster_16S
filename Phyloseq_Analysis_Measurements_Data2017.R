@@ -2,7 +2,6 @@
 # 2021-07-18
 # Author: Monse Garcia
 
-# abundance for otu's in species and clams and save with ggsave####
 # 2018 Data only look at Oysters, any found in both, more starting point ####
 # look for any in 2017 for increased weight and increased length ####
 
