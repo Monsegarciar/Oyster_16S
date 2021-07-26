@@ -128,7 +128,7 @@ deseq17_width = DESeq(deseq17_width, test="Wald", fitType="parametric")
 
 res17_width = results(deseq17_width, cooksCutoff = FALSE)
 alpha = 0.05 
-sigtab17_width = res17_length[which(res17_width$padj < alpha), ]
+sigtab17_width = res17_width[which(res17_width$padj < alpha), ]
 sigtab17_width = cbind(as(sigtab17_width, "data.frame"), as(tax_table(physeq_count17)[rownames(sigtab17_width), ], "matrix"))
 
 #Theme for Graph
@@ -141,7 +141,7 @@ x = tapply(sigtab17_width$log2FoldChange, sigtab17_width$Phylum, function(x) max
 x = sort(x, TRUE)
 sigtab17_width$Phylum = factor(as.character(sigtab17_width$Phylum), levels=names(x))
 
-# Genus
+# Class
 x = tapply(sigtab17_width$log2FoldChange, sigtab17_width$Class, function(x) max(x))
 x = sort(x, TRUE)
 sigtab17_width$Class = factor(as.character(sigtab17_width$Class), levels=names(x))
@@ -149,7 +149,7 @@ sigtab17_width$Class = factor(as.character(sigtab17_width$Class), levels=names(x
 ggplot(sigtab17_width, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Width- Phylum and Class 2017")
 
-ggsave(filename = "Normalized Width Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 17, height = 8)  
+ggsave(filename = "Normalized Width Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 20, height = 8)  
 
 
 # Taking out the significant OTU's ####
