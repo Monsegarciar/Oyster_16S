@@ -5,13 +5,15 @@
 #Packages Required
 require(phyloseq)
 require(ggplot2)
-library(data.table)
+require(data.table)
 require(RColorBrewer)
+require("ggpubr")
+require(dplyr)
+require(tidyr)
+require(DESeq2)
 library("ggpubr")
-library(dplyr)
-library(tidyr)
-library(DESeq2)
-
+require(genefilter)
+library(genefilter)
 
 # Loading data ####
 
