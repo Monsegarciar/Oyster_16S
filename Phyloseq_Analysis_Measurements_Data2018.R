@@ -110,6 +110,9 @@ saveRDS(physeq_count18_height, "Data/physeq_count18_height.rds")
 
 saveRDS(physeq_class18_height, "Data/physeq_class18_height.rds")
 
+
+physeq_count18_height <- readRDS("Data/physeq_count18_height.rds")
+physeq_count18_height
 # Length Analysis ####
 
 #Setting taxmat and otumat
@@ -182,13 +185,51 @@ saveRDS(physeq_class18_width, "Data/physeq_class18_width.rds")
 
 # Weight Graphs ####
 
+# Loading phyloseq
+physeq_class18_weight <- readRDS("Data/physeq_class18_weight.rds")
+physeq_class18_weight
+
+
 # Ordination Graph 
+
 Phy.ord18 <- ordinate(physeq_class18_weight, "NMDS", "bray")
-plot4= plot_ordination(physeq_class18_weight, Phy.ord18, type = "split", 
+plot_ordination(physeq_class18_weight, Phy.ord18, type = "split", 
                        color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Weight: Phylum and Treatments 2018")
-print(plot4)
 
 
+# Plot bar
+
+plot_bar(physeq_class18_weight, "Bucket2", fill="Weight_delta", facet_grid=~Species2.x)
+plot_bar(physeq_class18_weight, x="Bucket2", fill = "Species2.x") # shows abundance 
+
+
+# Richness plots
+
+plot_richness(physeq_class18_weight, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+# Height Graphs ####
+
+# Loading  phyloseq 
+
+physeq_class18_height <- readRDS("Data/physeq_class18_height.rds")
+physeq_class18_height
+
+# Ordination Graph 
+
+Phy.ord18 <- ordinate(physeq_class18_height, "NMDS", "bray")
+plot_ordination(physeq_class18_height, Phy.ord18, type = "split", 
+                color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_class18_height, "Bucket2", fill="Height_delta", facet_grid=~Species2.x)
+plot_bar(physeq_class18_height, x="Bucket2", fill = "Species2.x") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_class18_height, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 
 

@@ -4,6 +4,7 @@
 
 # 2018 Data only look at Oysters, any found in both, more starting point ####
 # look for any in 2017 for increased weight and increased length ####
+# abundance for otu's in species and clams and save with ggplot####
 
 #Loading Data ####
 
@@ -33,7 +34,6 @@ otu_length= sigtab17_length %>%
 otu_width = sigtab17_width %>% 
   select(Kingdom, Phylum, Class, Order, Family, Genus.x, Genus.y, Species)
 
-# abundance for otu's in species and clams and save with ggplot####
 
 # Weight Analysis ####
 
@@ -217,6 +217,29 @@ physeq_count17_width
 
 saveRDS(physeq_class17_width, "Data/physeq_class17_width.rds")
 saveRDS(physeq_count17_width, "Data/physeq_count17_width.rds")
+
+# Weight Graphs ####
+
+physeq_class17_weight <- readRDS("Data/physeq_class17_weight.rds")
+physeq_class17_weight
+
+# Ordination Graph 
+
+Phy.ord17 <- ordinate(physeq_class17_weight, "NMDS", "bray")
+plot_ordination(physeq_class17_weight, Phy.ord17, type = "split", 
+                       color = "Phylum", shape = "Site.x", title = "Plot Ordination for Weight: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_class17_weight, "Site.x", fill="Weight_diff", facet_grid=~Treatment2)
+
+#mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) 
+plot_bar(physeq_class17_weight, x="Site.x", fill = "Weight_diff") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_class17_weight, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 
 
