@@ -20,7 +20,7 @@ Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 #Changing row names in "Run23_taxa"
 Run123_taxa$V1=NULL
 rownames(Run123_taxa)= Run123_taxa$V2
-head(rownames(Run23_taxa))
+head(rownames(Run123_taxa))
 
 #Changing row names in "meta_17" data
 rownames(meta17_data)= meta17_data$UniqueID
