@@ -186,51 +186,97 @@ saveRDS(physeq_class18_width, "Data/physeq_class18_width.rds")
 # Weight Graphs ####
 
 # Loading phyloseq
-physeq_class18_weight <- readRDS("Data/physeq_class18_weight.rds")
-physeq_class18_weight
+physeq_count18_weight <- readRDS("Data/physeq_count18_weight.rds")
+physeq_count18_weight
 
 
 # Ordination Graph 
 
-Phy.ord18 <- ordinate(physeq_class18_weight, "NMDS", "bray")
-plot_ordination(physeq_class18_weight, Phy.ord18, type = "split", 
+Phy.ord18 <- ordinate(physeq_count18_weight, "NMDS", "bray")
+plot_ordination(physeq_count18_weight, Phy.ord18, type = "split", 
                        color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Weight: Phylum and Treatments 2018")
 
 
 # Plot bar
 
-plot_bar(physeq_class18_weight, "Bucket2", fill="Weight_delta", facet_grid=~Species2.x)
-plot_bar(physeq_class18_weight, x="Bucket2", fill = "Species2.x") # shows abundance 
+plot_bar(physeq_count18_weight, "Bucket2", fill="Weight_delta", facet_grid=~Species2.x)
+plot_bar(physeq_count18_weight, x="Bucket2", fill = "Species2.x") # shows abundance 
 
 
 # Richness plots
 
-plot_richness(physeq_class18_weight, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+plot_richness(physeq_count18_weight, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 # Height Graphs ####
 
 # Loading  phyloseq 
 
-physeq_class18_height <- readRDS("Data/physeq_class18_height.rds")
-physeq_class18_height
+physeq_count18_height <- readRDS("Data/physeq_count18_height.rds")
+physeq_count18_height
 
 # Ordination Graph 
 
-Phy.ord18 <- ordinate(physeq_class18_height, "NMDS", "bray")
-plot_ordination(physeq_class18_height, Phy.ord18, type = "split", 
+Phy.ord18 <- ordinate(physeq_count18_height, "NMDS", "bray")
+plot_ordination(physeq_count18_height, Phy.ord18, type = "split", 
                 color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Height: Phylum and Treatments 2018")
 
 # Plot bar 
 
-plot_bar(physeq_class18_height, "Bucket2", fill="Height_delta", facet_grid=~Species2.x)
-plot_bar(physeq_class18_height, x="Bucket2", fill = "Species2.x") # shows abundance 
+plot_bar(physeq_count18_height, "Bucket2", fill="Height_delta", facet_grid=~Species2.x)
+plot_bar(physeq_count18_height, x="Bucket2", fill = "Species2.x") # shows abundance 
 
 # Richness plots
 
-plot_richness(physeq_class18_height, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+plot_richness(physeq_count18_height, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 
+# Length Graphs ####
+
+# Loading  phyloseq 
+
+physeq_count18_length <- readRDS("Data/physeq_count18_length.rds")
+physeq_count18_length
+
+# Ordination Graph 
+
+Phy.ord18 <- ordinate(physeq_count18_length, "NMDS", "bray")
+plot_ordination(physeq_count18_length, Phy.ord18, type = "split", 
+                color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_count18_length, "Bucket2", fill="Height_delta", facet_grid=~Species2.x)
+plot_bar(physeq_count18_length, x="Bucket2", fill = "Species2.x") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_count18_length, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+
+# Width Graphs ####
+
+# Loading  phyloseq 
+
+physeq_count18_width <- readRDS("Data/physeq_count18_width.rds")
+physeq_count18_width
+
+# Ordination Graph 
+
+Phy.ord18 <- ordinate(physeq_count18_width, "NMDS", "bray")
+plot_ordination(physeq_count18_width, Phy.ord18, type = "split", 
+                color = "Phylum", shape = "Bucket2", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_count18_width, "Bucket2", fill="Height_delta", facet_grid=~Species2.x)
+plot_bar(physeq_count18_width, x="Bucket2", fill = "Species2.x") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_count18_width, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 

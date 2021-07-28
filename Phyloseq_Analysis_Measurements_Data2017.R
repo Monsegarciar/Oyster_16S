@@ -3,7 +3,7 @@
 # Author: Monse Garcia
 
 # 2018 Data only look at Oysters, any found in both, more starting point ####
-# look for any in 2017 for increased weight and increased length ####
+# look for any in 2017 and 2018 for increased weight and increased length and see the similar ones####
 # abundance for otu's in species and clams and save with ggplot####
 
 #Loading Data ####
@@ -220,13 +220,13 @@ saveRDS(physeq_count17_width, "Data/physeq_count17_width.rds")
 
 # Weight Graphs ####
 
-physeq_class17_weight <- readRDS("Data/physeq_class17_weight.rds")
-physeq_class17_weight
+physeq_count17_weight <- readRDS("Data/physeq_count17_weight.rds")
+physeq_count17_weight
 
 # Ordination Graph 
 
-Phy.ord17 <- ordinate(physeq_class17_weight, "NMDS", "bray")
-plot_ordination(physeq_class17_weight, Phy.ord17, type = "split", 
+Phy.ord17 <- ordinate(physeq_count17_weight3, "NMDS", "bray") # does not run, but can add 1 in for the zero's 
+plot_ordination(physeq_class17_weight2, Phy.ord17, type = "split", 
                        color = "Phylum", shape = "Site.x", title = "Plot Ordination for Weight: Phylum and Treatments 2018")
 
 # Plot bar 
@@ -238,10 +238,91 @@ plot_bar(physeq_class17_weight, x="Site.x", fill = "Weight_diff") # shows abunda
 
 # Richness plots
 
-plot_richness(physeq_class17_weight, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
+plot_richness(physeq_count17_weight, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+# Height Graphs ####
+
+physeq_count17_height <- readRDS("Data/physeq_count17_height.rds")
+physeq_count17_height
+
+# Ordination Graph 
+
+Phy.ord17 <- ordinate(physeq_count17_height, "NMDS", "bray")
+plot_ordination(physeq_count17_height, Phy.ord17, type = "split", 
+                color = "Phylum", shape = "Site.x", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_count17_height, "Site.x", fill="Weight_diff", facet_grid=~Treatment2)
+
+#mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) 
+plot_bar(physeq_count17_height, x="Site.x", fill = "Weight_diff") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_count17_height, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
 
+# Length Graphs ####
 
+physeq_count17_length <- readRDS("Data/physeq_count17_length.rds")
+physeq_count17_length
+
+# Ordination Graph 
+
+Phy.ord17 <- ordinate(physeq_count17_length, "NMDS", "bray")
+plot_ordination(physeq_count17_length, Phy.ord17, type = "split", 
+                color = "Phylum", shape = "Site.x", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_count17_length, "Site.x", fill="Weight_diff", facet_grid=~Treatment2)
+
+#mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) 
+plot_bar(physeq_count17_length, x="Site.x", fill = "Weight_diff") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_count17_length, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+
+# Width Graphs ####
+
+physeq_count17_width <- readRDS("Data/physeq_count17_width.rds")
+physeq_count17_width
+
+# Ordination Graph 
+
+Phy.ord17 <- ordinate(physeq_count17_width, "NMDS", "bray")
+plot_ordination(physeq_count17_width, Phy.ord17, type = "split", 
+                color = "Phylum", shape = "Site.x", title = "Plot Ordination for Height: Phylum and Treatments 2018")
+
+# Plot bar 
+
+plot_bar(physeq_count17_width, "Site.x", fill="Weight_diff", facet_grid=~Treatment2)
+
+#mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) 
+plot_bar(physeq_count17_width, x="Site.x", fill = "Weight_diff") # shows abundance 
+
+# Richness plots
+
+plot_richness(physeq_count17_width, x="Site.x", measures=c("Shannon", "Simpson"), color = "Weight_diff")+
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+# Merging the data to see similar ones
+
+taxa_length17 = tax_table(physeq_count17_length)
+taxa_weight17 = tax_table(physeq_count17_weight)
+taxa_height17 = tax_table(physeq_count17_height)
+taxa_width17 = tax_table(physeq_count17_width)
+View(taxa_weight17)
+rownames(taxa_weight17)
+
+tax_table(physeq_count17_weight)$OTU <- paste0(rownames(tax_table(physeq_count17_weight)))
+View(taxa_height17)
+taxa_measure17 = merge(taxa_height17, taxa_weight17, by= "Class", all.x = TRUE)
 
 
