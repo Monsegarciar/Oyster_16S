@@ -38,6 +38,14 @@ alpha = 0.05 # switch to 0.05- generalized linear models
 sigtab17_weight = res17_weight[which(res17_weight$padj < alpha), ]
 sigtab17_weight = cbind(as(sigtab17_weight, "data.frame"), as(tax_table(physeq_count17)[rownames(sigtab17_weight), ], "matrix"))
 
+weight_otus= row.names(sigtab17_weight)
+
+physeq_count17_weight2 = prune_taxa(physeq_count17, taxa = weight_otus)
+physeq_count17_weight2
+
+physeq_count17_weight3=prune_taxa(taxa_sums(physeq_count17_weight2) > 0, physeq_count17_weight2)
+
+View(otu_table(physeq_count17_weight3))
 # Theme for Graph
 theme_set(theme_bw())
 scale_fill_discrete <- function(palname = "Set1", ...) {
