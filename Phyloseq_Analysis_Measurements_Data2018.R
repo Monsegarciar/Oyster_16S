@@ -279,4 +279,30 @@ plot_bar(physeq_count18_width, x="Bucket2", fill = "Species2.x") # shows abundan
 plot_richness(physeq_count18_width, x="Bucket2", measures=c("Shannon", "Simpson"), color = "Species2.x")+
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
+# Merging the data to similar ones ####
+
+# Extracting the taxa tables from each phyloseq
+
+taxa_length18 = tax_table(physeq_count18_length)
+taxa_weight18 = tax_table(physeq_count18_weight)
+taxa_height18 = tax_table(physeq_count18_height)
+taxa_width18 = tax_table(physeq_count18_width)
+
+# Cleaning up and merging taxa table into new taxa table 
+
+taxa_measure18 = merge(taxa_height18, taxa_weight18, by= "row.names")
+rownames(taxa_measure18) = taxa_measure18$Row.names
+taxa_measure18 = merge(taxa_measure18, taxa_length18, by= "row.names")
+taxa_measure18 <- subset(taxa_measure18, select = -c(Row.names, Kingdom.x, Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x, Species.x, 
+                                                     Kingdom.y, Phylum.y, Class.y, Order.y, Family.y, Genus.x.y, Genus.y.y, Species.y))
+rownames(taxa_measure18)= taxa_measure18$Row.names
+taxa_measure18= merge(taxa_measure18, taxa_width18, by= "row.names")
+rownames(taxa_measure18) = taxa_measure18$Row.names
+taxa_measure18 <- subset(taxa_measure18, select= -c(Row.names,Kingdom.x, Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x, Species.x))
+taxa_measure18 <- subset(taxa_measure18, select = -c(Row.names))
+colnames(taxa_measure18) <- c("Kingdom", "Phylum", "Class", "Order", 
+                              "Family", "Genus.x","Genus.y", "Species")
+
+# Saving significant taxa for measurements 
+write.csv(taxa_measure18, file = "Data/taxa_measure18.csv")
 

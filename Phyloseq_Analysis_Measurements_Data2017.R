@@ -226,7 +226,7 @@ physeq_count17_weight
 # Ordination Graph 
 
 Phy.ord17 <- ordinate(physeq_count17_weight3, "NMDS", "bray") # does not run, but can add 1 in for the zero's 
-plot_ordination(physeq_class17_weight2, Phy.ord17, type = "split", 
+plot_ordination(physeq_class17_weight3, Phy.ord17, type = "split", 
                        color = "Phylum", shape = "Site.x", title = "Plot Ordination for Weight: Phylum and Treatments 2018")
 
 # Plot bar 
@@ -314,15 +314,34 @@ plot_richness(physeq_count17_width, x="Site.x", measures=c("Shannon", "Simpson")
 
 # Merging the data to see similar ones
 
+# Extracting the taxa tables from each phyloseq
+
 taxa_length17 = tax_table(physeq_count17_length)
 taxa_weight17 = tax_table(physeq_count17_weight)
 taxa_height17 = tax_table(physeq_count17_height)
 taxa_width17 = tax_table(physeq_count17_width)
-View(taxa_weight17)
-rownames(taxa_weight17)
 
-tax_table(physeq_count17_weight)$OTU <- paste0(rownames(tax_table(physeq_count17_weight)))
-View(taxa_height17)
-taxa_measure17 = merge(taxa_height17, taxa_weight17, by= "Class", all.x = TRUE)
+# Cleaning up and merging taxa table into new taxa table 
 
+taxa_measure17 = merge(taxa_height17, taxa_weight17, by= "row.names")
+rownames(taxa_measure17) = taxa_measure17$Row.names
+taxa_measure17= merge(taxa_measure17, taxa_length17, by="row.names")
+taxa_measure17 <- subset(taxa_measure17, select = -c(Row.names, Kingdom.x, Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x, 
+                                                     Species.x, Kingdom.y, Phylum.y, Class.y, Order.y, Family.y, Genus.x.y, Genus.y.y, 
+                                                     Species.y))
+rownames(taxa_measure17)= taxa_measure17$Row.names
+taxa_measure17 = merge(taxa_measure17, taxa_width17, by= "row.names")
+taxa_measure17 <- subset(taxa_measure17, select = -c(Row.names, Kingdom.x, Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x, Species.x))
+rownames(taxa_measure17)= taxa_measure17$Row.names
+taxa_measure17 <- subset(taxa_measure17, select = -c(Row.names))
+colnames(taxa_measure17) <- c("Kingdom", "Phylum", "Class", "Order", 
+                      "Family", "Genus.x","Genus.y", "Species")
+
+# Saving significant taxa for measurements 
+write.csv(taxa_measure17, file = "Data/taxa_measure17.csv")
+
+
+?calc_taxon_abund
+# Look at taxonomy- graph specific taxa (e.g. class, genus)
+# log 2 fold change and see which ones more associated with weight 
 
