@@ -6,6 +6,28 @@
 # look for any in 2017 and 2018 for increased weight and increased length and see the similar ones####
 # abundance for otu's in species and clams and save with ggplot####
 
+install.packages("vegan")
+install.packages("agricolae")
+
+install.packages("devtools")
+devtools::install_github("ropensci/taxa")
+devtools::install_github("grunwaldlab/metacoder")
+
+# Loading packages ####
+
+require(phyloseq)
+require(ggplot2)
+library(data.table)
+require(RColorBrewer)
+library("ggpubr")
+library(dplyr)
+library(tidyr)
+library(DESeq2)
+require(vegan)
+library(agricolae)
+library(devtools)
+library(metacoder)
+
 #Loading Data ####
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -339,8 +361,27 @@ colnames(taxa_measure17) <- c("Kingdom", "Phylum", "Class", "Order",
 
 # Saving significant taxa for measurements 
 write.csv(taxa_measure17, file = "Data/taxa_measure17.csv")
+taxa_measure17 <- read.csv("Data/taxa_measure17.csv")
 
+# Heat Trees for Measurements ####
 
+rownames(taxa_measure17)= taxa_measure17$X
+taxa_measure17 <- subset(taxa_measure17, select = -c(X))
+taxa_m <- taxmap(data = taxa_measure17)
+print(names(taxa_measure17))
+
+tax_matrix17=as.matrix(taxa_measure17)
+TAX17= tax_table(tax_matrix17)
+taxon_ids(TAX17)
+extract_tax_data(taxa_measure17, key = taxa_measure17)  
+?extract_tax_data
+set.seed(2)
+ 
+heat_tree(taxa_m, node_size= n_obs, node_label= name,
+            node_color= prop_amplified, 
+            node_color_range= c("red", "yellow", "cyan"), 
+            title = "Taxonomy for Measurments")
+?taxon_id
 ?calc_taxon_abund
 # Look at taxonomy- graph specific taxa (e.g. class, genus)
 # log 2 fold change and see which ones more associated with weight 

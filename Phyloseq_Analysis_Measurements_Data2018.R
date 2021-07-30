@@ -3,6 +3,17 @@
 # Author: Monse Garcia
 
 
+# Loading packages ####
+
+require(phyloseq)
+require(ggplot2)
+library(data.table)
+require(RColorBrewer)
+library("ggpubr")
+library(dplyr)
+library(tidyr)
+library(DESeq2)
+
 #Loading Data ####
 
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
@@ -305,4 +316,6 @@ colnames(taxa_measure18) <- c("Kingdom", "Phylum", "Class", "Order",
 
 # Saving significant taxa for measurements 
 write.csv(taxa_measure18, file = "Data/taxa_measure18.csv")
+
+# Heat Tree for Measuremnts ####
 
