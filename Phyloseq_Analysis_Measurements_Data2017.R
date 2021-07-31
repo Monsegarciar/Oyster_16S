@@ -376,13 +376,28 @@ taxon_ids(TAX17)
 extract_tax_data(taxa_measure17, key = taxa_measure17)  
 ?extract_tax_data
 set.seed(2)
- 
-heat_tree(taxa_m, node_size= n_obs, node_label= name,
+
+tax_m <- parse_phyloseq(physeq_count17_width, class_regex = "(.*)", class_key = "taxon_name")
+
+heat_tree(tax_m, node_size= n_obs,
             node_color= prop_amplified, 
             node_color_range= c("red", "yellow", "cyan"), 
             title = "Taxonomy for Measurments")
+
+heat_tree(tax_m, node_label = taxon_names,
+          node_size = n_obs, 
+          node_color = Weight_diff, 
+          layout = "da", initial_layout = "re", 
+          title = "Taxa in leafs")
+
+# geom_col()
+?check_ele
 ?taxon_id
 ?calc_taxon_abund
+
+# RFTM_dds18 <- phyloseq_to_deseq2(physeq_class, ~RFTM_score.x+Species)
 # Look at taxonomy- graph specific taxa (e.g. class, genus)
 # log 2 fold change and see which ones more associated with weight 
+# Other variables involved include site in 2017 
+
 
