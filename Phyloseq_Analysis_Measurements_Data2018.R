@@ -7,7 +7,7 @@
 
 require(phyloseq)
 require(ggplot2)
-library(data.table)
+require(data.table)
 require(RColorBrewer)
 library("ggpubr")
 library(dplyr)
@@ -19,6 +19,11 @@ library(DESeq2)
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
 
 asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
+
+# Separating Oysters
+metagen18_oys<- meta_gen18_data %>% 
+  filter(Species2.x == "CV")
+asvtable_oys18<- asvtable_18[c(1:15,21:23,28,29,34:39,45:59,61:64,70,74:79,85,91:94,98), ]
 
 # Taking out weight significant OTU's from DESeq Anlaysis####
 
@@ -316,6 +321,17 @@ colnames(taxa_measure18) <- c("Kingdom", "Phylum", "Class", "Order",
 
 # Saving significant taxa for measurements 
 write.csv(taxa_measure18, file = "Data/taxa_measure18.csv")
+taxa_measure18 <- read.csv("Data/taxa_measure18.csv")
 
-# Heat Tree for Measuremnts ####
+# Heat Tree for Measurements ####
 
+heat_tree(tax_m, node_label = taxon_names,
+          node_size = n_obs, 
+          node_color = n_obs, 
+          layout = "da", initial_layout = "re", 
+          title = "Taxa in leafs")
+
+# Separate mussels and oysters, species and do them independently to see if there is a difference/similarity
+# Plot small oysters from farmer and grew a lot from course of experiments mussels were collected from adulthood and might not have grown more 
+# Oysters are more interesting in knowing how to grow them better and bigger 
+# Mussels and oysters growth plot and see if there are any differences and similarities 
