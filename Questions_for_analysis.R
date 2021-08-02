@@ -311,7 +311,7 @@ ggplot(meta17_data, aes(x=Site.x, y= Weight_diff))+
 ggplot(meta17_data, aes(x=Site.x, y= Height_diff))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and height
 
-ggplot(meta17_data, aes(x=Site.x, y= Length_diff))+
+ggplot(meta17_data, aes(x=Length_diff, y= Length_delta))+
   geom_jitter(alpha =.8,aes(color= as.factor(peacrabs.x)))+ geom_boxplot(alpha=0) + facet_grid(rows = vars(peacrabs.x), cols = vars(Site.x), scales = "free")# Jitter plot with pea crabs and length
 
 ggplot(meta17_data, aes(x=Site.x, y= Width_diff))+
