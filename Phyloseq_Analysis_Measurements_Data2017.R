@@ -377,7 +377,7 @@ extract_tax_data(taxa_measure17, key = taxa_measure17)
 ?extract_tax_data
 set.seed(2)
 
-tax_m <- parse_phyloseq(physeq_count17_width, class_regex = "(.*)", class_key = "taxon_name")
+tax_m <- parse_phyloseq(physeq_count17_weight, class_regex = "(.*)", class_key = "taxon_name")
 
 heat_tree(tax_m, node_size= n_obs,
             node_color= prop_amplified, 
@@ -385,10 +385,16 @@ heat_tree(tax_m, node_size= n_obs,
             title = "Taxonomy for Measurments")
 
 heat_tree(tax_m, node_label = taxon_names,
-          node_size = n_obs, 
-          node_color = Weight_diff, 
+          node_size = n_obs(tax_m), 
+          node_color = n_obs(tax_m), 
           layout = "da", initial_layout = "re", 
-          title = "Taxa in leafs")
+          title = "Taxa in Width")
+
+heat_tree(tax_m)
+
+tax_m %>% 
+  heat_tree(node_label = taxon_names, node_size = n_obs(tax_m), 
+            node_color = n_obs(tax_m), layout = "automatic", initial_layout = "fruchterman-reingold")
 
 # geom_col()
 ?check_ele
