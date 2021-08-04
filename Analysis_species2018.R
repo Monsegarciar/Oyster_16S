@@ -69,9 +69,15 @@ physeq_count18_oys
 
 plot_bar(physeq_count18_oys, x="Bucket2", fill = "Species2.x") + geom_col()
 
-# Comparing weight growth in oysters
-ggplot(data = metagen18_oys, aes(x = Weight_diff, y = Weight_delta, colour = RFTM_score.x)) + geom_point() + facet_wrap(~Color_Bucket)
+# Weight growth in oysters
+ggplot(data = metagen18_oys, aes(x = Weight_diff, y = Weight_delta, colour = Bucket2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Weight Growth in Oysters")
+ggplot(data = metagen18_oys, aes(x =RFTM_score.x, y = Weight_delta)) + geom_point() #colour = "red"+ facet_wrap(~Color_Bucket)
 
+# Weight Growth in mussels
+ggplot(data = metagen18_muss, aes(x = Weight_diff, y = Weight_delta, colour = Bucket2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Weight Growth in Mussels")
 
-ggplot(data = metagen18_oys, aes(x =RFTM_score.x, y = Weight_delta)) + geom_point(colour = "red") #+ facet_wrap(~Color_Bucket)
+# Weight Growth in clams
+ggplot(data = metagen18_clam, aes(x = Weight_diff, y = Weight_delta, colour = Bucket2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Weight Growth in Clams") # no measurements for clams
 
+# Weight Growth in shell
+ggplot(data = metagen18_shell, aes(x = Weight_diff, y = Weight_delta, colour = Bucket2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Weight Growth in Shells") # no measurements for shells
