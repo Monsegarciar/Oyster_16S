@@ -325,13 +325,18 @@ taxa_measure18 <- read.csv("Data/taxa_measure18.csv")
 
 # Heat Tree for Measurements ####
 
-heat_tree(tax_m, node_label = taxon_names,
-          node_size = n_obs, 
-          node_color = n_obs, 
+install.packages("metacoder")
+library(metacoder)
+tax_m18 <- parse_phyloseq(physeq_count18_width, class_regex = "(.*)", class_key = "taxon_name")
+
+heat_tree(tax_m18, node_label = taxon_names,
+          node_size = n_obs(tax_m18), 
+          node_color = n_obs(tax_m18), 
           layout = "da", initial_layout = "re", 
           title = "Taxa in leafs")
+heat_tree(tax_m18)
 
 # Separate mussels and oysters, species and do them independently to see if there is a difference/similarity
 # Plot small oysters from farmer and grew a lot from course of experiments mussels were collected from adulthood and might not have grown more 
 # Oysters are more interesting in knowing how to grow them better and bigger 
-# Mussels and oysters growth plot and see if there are any differences and similarities 
+ 
