@@ -6,12 +6,7 @@
 # look for any in 2017 and 2018 for increased weight and increased length and see the similar ones####
 # abundance for otu's in species and clams and save with ggplot####
 
-install.packages("vegan")
-install.packages("agricolae")
-
-install.packages("devtools")
-devtools::install_github("ropensci/taxa")
-devtools::install_github("grunwaldlab/metacoder")
+install.packages("metacoder")
 
 # Loading packages ####
 
@@ -23,9 +18,6 @@ library("ggpubr")
 library(dplyr)
 library(tidyr)
 library(DESeq2)
-require(vegan)
-library(agricolae)
-library(devtools)
 library(metacoder)
 
 #Loading Data ####
@@ -377,7 +369,7 @@ extract_tax_data(taxa_measure17, key = taxa_measure17)
 ?extract_tax_data
 set.seed(2)
 
-tax_m <- parse_phyloseq(physeq_count17_weight, class_regex = "(.*)", class_key = "taxon_name")
+tax_m <- parse_phyloseq(physeq_count17_weight) #, class_regex = "(.*)", class_key = "taxon_name")
 
 heat_tree(tax_m, node_size= n_obs,
             node_color= prop_amplified, 
