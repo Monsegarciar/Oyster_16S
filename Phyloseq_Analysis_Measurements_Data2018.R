@@ -13,7 +13,7 @@ library("ggpubr")
 library(dplyr)
 library(tidyr)
 library(DESeq2)
-
+library(Rcpp)
 #Loading Data ####
 
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
@@ -327,13 +327,21 @@ taxa_measure18 <- read.csv("Data/taxa_measure18.csv")
 
 install.packages("metacoder")
 library(metacoder)
-tax_m18 <- parse_phyloseq(physeq_count18_width, class_regex = "(.*)", class_key = "taxon_name")
+tax_m18 = parse_phyloseq(physeq_count18)
 
-heat_tree(tax_m18, node_label = taxon_names,
-          node_size = n_obs(tax_m18), 
-          node_color = n_obs(tax_m18), 
-          layout = "da", initial_layout = "re", 
+tax_m18 %>% 
+heat_tree(node_label = taxon_names,
+          node_size = n_obs, 
+          node_color = n_obs, 
+          node_color_axis_label = "OTU count",
+          layout = "fruchterman-reingold", initial_layout = "reingold-tilford", 
           title = "Taxa in leafs")
+
+heat_tree(tax_m18,
+          node_label = taxon_names(tax_m18),
+          node_size = n_obs(tax_m18),
+          node_color = n_obs(tax_m18))
+
 heat_tree(tax_m18)
 
 # Separate mussels and oysters, species and do them independently to see if there is a difference/similarity

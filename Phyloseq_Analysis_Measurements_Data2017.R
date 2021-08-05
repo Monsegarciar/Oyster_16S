@@ -7,6 +7,8 @@
 # abundance for otu's in species and clams and save with ggplot####
 
 install.packages("metacoder")
+install.packages("vegan")
+install.packages("ggtree")
 
 # Loading packages ####
 
@@ -19,6 +21,7 @@ library(dplyr)
 library(tidyr)
 library(DESeq2)
 library(metacoder)
+library(ggtree)
 
 #Loading Data ####
 
@@ -357,25 +360,7 @@ taxa_measure17 <- read.csv("Data/taxa_measure17.csv")
 
 # Heat Trees for Measurements ####
 
-rownames(taxa_measure17)= taxa_measure17$X
-taxa_measure17 <- subset(taxa_measure17, select = -c(X))
-taxa_m <- taxmap(data = taxa_measure17)
-print(names(taxa_measure17))
-
-tax_matrix17=as.matrix(taxa_measure17)
-TAX17= tax_table(tax_matrix17)
-taxon_ids(TAX17)
-extract_tax_data(taxa_measure17, key = taxa_measure17)  
-?extract_tax_data
-set.seed(2)
-
-tax_m <- parse_phyloseq(physeq_count17_weight) #, class_regex = "(.*)", class_key = "taxon_name")
-
-heat_tree(tax_m, node_size= n_obs,
-            node_color= prop_amplified, 
-            node_color_range= c("red", "yellow", "cyan"), 
-            title = "Taxonomy for Measurments")
-
+tax_m = parse_phyloseq(physeq_count17_weight) 
 heat_tree(tax_m, node_label = taxon_names,
           node_size = n_obs(tax_m), 
           node_color = n_obs(tax_m), 
@@ -383,19 +368,23 @@ heat_tree(tax_m, node_label = taxon_names,
           title = "Taxa in Width")
 
 heat_tree(tax_m)
-
 tax_m %>% 
   heat_tree(node_label = taxon_names, node_size = n_obs(tax_m), 
             node_color = n_obs(tax_m), layout = "automatic", initial_layout = "fruchterman-reingold")
 
-# geom_col()
-?check_ele
-?taxon_id
-?calc_taxon_abund
+# Taxa for Measurements 
+rownames(taxa_measure17)= taxa_measure17$X
+taxa_measure17$X = NULL
+tax_measure17 = parse_tax_data(taxa_measure17)
+heat_tree(tax_measure17, node_label = taxon_names,
+          node_size = n_obs(tax_measure17), 
+          node_color = n_obs(tax_measure17), 
+          layout = "fr", initial_layout = "re", 
+          title = "Taxa in Measurements")
 
+# geom_col()
 # RFTM_dds18 <- phyloseq_to_deseq2(physeq_class, ~RFTM_score.x+Species)
 # Look at taxonomy- graph specific taxa (e.g. class, genus)
 # log 2 fold change and see which ones more associated with weight 
 # Other variables involved include site in 2017 
-
 

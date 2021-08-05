@@ -2,13 +2,15 @@
 # 2021-06-21
 # Author: Monse Garcia
 
-# Required Packages ####
+BiocManager::install("ggtree")
+a# Required Packages ####
 require(phyloseq)
 library(data.table)
 library(ggplot2)
 library(plyr)
 library(dplyr)
-
+library(ggtree)
+require(metacoder)
 #Loading Data ####
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -102,10 +104,10 @@ p4= plot_ordination(physeq_class17, Phy.ord, type = "split",
 print(p4)
 
 
+# Heat Tree ####
 
+tax_17 = parse_phyloseq(physeq_count17)
+tax_17
 
-
-
-
-
+heat_tree(tax_17)
 
