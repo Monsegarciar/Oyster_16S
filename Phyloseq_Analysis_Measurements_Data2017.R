@@ -360,6 +360,7 @@ taxa_measure17 <- read.csv("Data/taxa_measure17.csv")
 
 # Heat Trees for Measurements ####
 
+
 tax_m = parse_phyloseq(physeq_count17_weight) 
 heat_tree(tax_m, node_label = taxon_names,
           node_size = n_obs(tax_m), 
@@ -376,10 +377,11 @@ tax_m %>%
 rownames(taxa_measure17)= taxa_measure17$X
 taxa_measure17$X = NULL
 tax_measure17 = parse_tax_data(taxa_measure17)
+tax_measure17
 heat_tree(tax_measure17, node_label = taxon_names,
           node_size = n_obs(tax_measure17), 
           node_color = n_obs(tax_measure17), 
-          layout = "fr", initial_layout = "re", 
+          layout = "automatic", initial_layout = "automatic", 
           title = "Taxa in Measurements")
 
 # geom_col()

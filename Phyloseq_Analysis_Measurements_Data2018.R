@@ -325,9 +325,62 @@ taxa_measure18 <- read.csv("Data/taxa_measure18.csv")
 
 # Heat Tree for Measurements ####
 
+# Phyloseq with only the Measurent taxa
+
+# Loading Data
+meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
+
+asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
+
+#Changing rownames of new taxa table
+rownames(taxa_measure18)= taxa_measure18$X
+taxa_measure18$X = NULL
+
+#Changing row names in meta_gen18 data
+rownames(meta_gen18_data)= meta_gen18_data$UniqueID 
+head(rownames(meta_gen18_data))
+
+#Changing rownames in asvtable data
+rownames(asvtable_18)= asvtable_18$V1
+head(rownames(asvtable_18))
+
+#Setting taxmat and otumat
+taxmat18= taxa_measure18
+otumat18=asvtable_18
+
+#Converting to matrix
+otu_matrix18= as.matrix(otumat18, rownames = "V1")
+
+tax_matrix18=as.matrix(taxmat18)
+
+meta_gen18_data=as.data.frame(meta_gen18_data)
+
+#Setting OTU, TAX, and SAMP
+OTU18= otu_table(otu_matrix18, taxa_are_rows = FALSE)
+
+TAX18= tax_table(tax_matrix18)
+
+SAMP18= sample_data(meta_gen18_data)
+
+OTU_count18=transform_sample_counts(OTU18, function(x) 1E6 * x/sum(x))
+
+physeq_class18_measure = phyloseq(OTU18, TAX18, SAMP18)
+physeq_class18_measure
+
+physeq_count18_measure = phyloseq(OTU_count18, TAX18, SAMP18)
+physeq_count18_measure
+
+# Saving Phyloseq 
+saveRDS(physeq_class18_measure, "Data/physeq_class18_measure.rds")
+saveRDS(physeq_count18_measure, "Data/physeq_count18_measure.rds")
+
+# Installing Packages 
 install.packages("metacoder")
 library(metacoder)
-tax_m18 = parse_phyloseq(physeq_count18)
+
+# Heat Tree with Measurement taxa
+
+tax_m18 = parse_phyloseq(physeq_count18_measure)
 
 tax_m18 %>% 
 heat_tree(node_label = taxon_names,
@@ -342,6 +395,23 @@ heat_tree(tax_m18,
           node_size = n_obs(tax_m18),
           node_color = n_obs(tax_m18))
 
+set.seed(2)
+tax_m18 %>% 
+heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+          node_size = n_obs,
+          node_color = n_obs,
+          node_color_axis_label = "OTU count",
+          layout = "davidson-harel", initial_layout = "reingold-tilford")
+
+set.seed(2)
+tax_m18 %>% 
+  heat_tree(node_label = taxon_names,
+            node_size = n_obs,
+            node_color = n_supertaxa,
+            node_color_range = c("red", "yellow", "green", "blue"),
+            node_color_axis_label = "OTU count", 
+            initial_layout = "reingold-tilford",layout = "davidson-harel")
+            
 heat_tree(tax_m18)
 
 # Separate mussels and oysters, species and do them independently to see if there is a difference/similarity
