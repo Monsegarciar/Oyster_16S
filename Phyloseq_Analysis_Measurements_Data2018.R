@@ -13,7 +13,10 @@ library("ggpubr")
 library(dplyr)
 library(tidyr)
 library(DESeq2)
+library(metacoder)
+library(ggtree)
 library(Rcpp)
+
 #Loading Data ####
 
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
