@@ -36,8 +36,8 @@ rownames(metagen18_oys)= metagen18_oys$UniqueID
 head(rownames(metagen18_oys))
 
 #Changing rownames in asvtable data
-rownames(asvtable_18)= asvtable_18$V1
-head(rownames(asvtable_18))
+rownames(asvtable_oys18)= asvtable_oys18$V1
+head(rownames(asvtable_oys18))
 
 #Setting taxmat and otumat
 otumat18_oys=asvtable_18
@@ -81,3 +81,32 @@ ggplot(data = metagen18_clam, aes(x = Weight_diff, y = Weight_delta, colour = Bu
 
 # Weight Growth in shell
 ggplot(data = metagen18_shell, aes(x = Weight_diff, y = Weight_delta, colour = Bucket2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Weight Growth in Shells") # no measurements for shells
+
+# 2017 Data
+
+meta17_data <- read.csv("Data/meta17_data_update.csv")
+
+# Height
+ggplot(data = meta17_data, aes(x = Height_diff, y = Height_delta, colour = Treatment2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Height Growth in Oysters", caption = "2017 Data", x= "Height Difference", y= "Normalized Height")
+ggsave(filename = "Height Growth in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)             
+
+# Length
+ggplot(data = meta17_data, aes(x = Length_diff, y = Length_delta, colour = Treatment2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Length Growth in Oysters", caption = "2017 Data", x= "Length Difference", y= "Normalized Length")
+ggsave(filename = "Length Growth in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)             
+
+# Width
+ggplot(data = meta17_data, aes(x = Width_diff, y = Width_delta, colour = Treatment2)) + geom_point() + facet_wrap(~RFTM_score.x) + labs(title = "Width Growth in Oysters", caption = "2017 Data", x= "Width Difference", y= "Normalized Width")
+ggsave(filename = "Width Growth in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)             
+
+# 2018 Data
+plot_richness(physeq_class18_oys, x="RFTM_score.x", measures=c("Shannon", "Simpson"), color = "RFTM_score.x")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
+
+a_my_comparisons18 <- list(c("0", "0.25"), c("0.25", "0.50"), c("0.75", "1"))
+symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+plot_richness(physeq_class18_oys, x="RFTM_score.x", measures=c("Shannon","Simpson"), color = "RFTM_score.x", title = "Boxplot of RFTM Scores 2018")+
+  geom_boxplot(alpha=0.6)+ 
+  theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
+  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons18, label = "p.signif", symnum.args = symnum.args18)
