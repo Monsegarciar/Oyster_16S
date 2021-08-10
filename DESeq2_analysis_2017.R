@@ -67,6 +67,13 @@ ggplot(sigtab17_weight, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_poi
 
 ggsave(filename = "Normalized Weight Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 15, height = 8)  
 
+# Taking out negative and positive OTU's
+
+neg_otus_weight <- sigtab17_weight %>% 
+  filter(log2FoldChange < 0)
+pos_otus_weight <- sigtab17_weight %>% 
+  filter(log2FoldChange > 0)
+
 # Normalized Height with DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Height_delta != "NA")
 
@@ -98,6 +105,12 @@ ggplot(sigtab17_height, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_poi
 
 ggsave(filename = "Normalized Height Phylum and Order 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 30, height = 8)  
 
+# Taking out negative and positive OTU's
+
+neg_otus_height <- sigtab17_height %>% 
+  filter(log2FoldChange < 0)
+pos_otus_height <- sigtab17_height %>% 
+  filter(log2FoldChange > 0)
 
 # Normalized Length DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Length_delta != "NA")
@@ -129,6 +142,13 @@ ggplot(sigtab17_length, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_poi
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Length- Phylum and Class 2017")
 
 ggsave(filename = "Normalized Length Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 17, height = 8)  
+ 
+# Taking out negative and positive OTU's
+
+neg_otus_length <- sigtab17_length %>% 
+  filter(log2FoldChange < 0)
+pos_otus_length <- sigtab17_length %>% 
+  filter(log2FoldChange > 0)
 
 # Normalized Width DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Width_delta != "NA")
@@ -161,6 +181,12 @@ ggplot(sigtab17_width, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_poin
 
 ggsave(filename = "Normalized Width Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 20, height = 8)  
 
+# Taking out negative and positive OTU's
+
+neg_otus_width <- sigtab17_width %>% 
+  filter(log2FoldChange < 0)
+pos_otus_width <- sigtab17_width %>% 
+  filter(log2FoldChange > 0)
 
 # Taking out the significant OTU's ####
 
@@ -183,6 +209,3 @@ otu_length= sigtab17_length %>%
 otu_width = sigtab17_width %>% 
   select(Kingdom, Phylum, Class, Order, Family, Genus.x, Genus.y, Species)
 
-
-# sig tab and merge it with taxa and then do a new phyloseq object 
-# prune taxa and keep otu's that are in the sigtab, look at prune taxa
