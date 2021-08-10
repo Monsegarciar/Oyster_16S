@@ -61,6 +61,13 @@ ggplot(sigtab18_weight, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_poi
 
 ggsave(filename = "Normalized Weight Phylum and Order 2018.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 25, height = 8)  
 
+# Taking out negative and positive OTU's
+
+neg_otus_weight18 <- sigtab18_weight %>% 
+  filter(log2FoldChange < 0)
+pos_otus_weight18 <- sigtab18_weight %>% 
+  filter(log2FoldChange > 0)
+
 # Normalized Height with DESeq2- 2018 Data ####
 physeq_count18 = subset_samples(physeq_count18, Height_delta != "NA")
 
@@ -94,6 +101,13 @@ ggplot(sigtab18_height, aes(x=Family, y=log2FoldChange, color=Phylum)) + geom_po
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Height- Phylum and Family 2018")
 
 ggsave(filename = "Normalized Height Phylum and Family 2018.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 30, height = 8)  
+
+# Taking out negative and positive OTU's
+
+neg_otus_height18 <- sigtab18_height %>% 
+  filter(log2FoldChange < 0)
+pos_otus_height18 <- sigtab18_height %>% 
+  filter(log2FoldChange > 0)
 
 # Normalized Length DESeq2- 2018 Data ####
 physeq_count18 = subset_samples(physeq_count18, Length_delta != "NA")
@@ -129,6 +143,13 @@ ggplot(sigtab18_length, aes(x=Family, y=log2FoldChange, color=Phylum)) + geom_po
 
 ggsave(filename = "Normalized Length Phylum and Family 2018.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 32, height = 8)  
 
+# Taking out negative and positive OTU's
+
+neg_otus_length18 <- sigtab18_length %>% 
+  filter(log2FoldChange < 0)
+pos_otus_length18 <- sigtab18_length %>% 
+  filter(log2FoldChange > 0)
+
 # Normalized Width DESeq2- 2017 Data ####
 physeq_count18 = subset_samples(physeq_count18, Width_delta != "NA")
 
@@ -162,6 +183,13 @@ ggplot(sigtab18_width, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_poin
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Width- Phylum and Order 2018")
 
 ggsave(filename = "Normalized Width Phylum and Order 2018.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 30, height = 8)  
+
+# Taking out negative and positive OTU's
+
+neg_otus_width18 <- sigtab18_width %>% 
+  filter(log2FoldChange < 0)
+pos_otus_width18 <- sigtab18_width %>% 
+  filter(log2FoldChange > 0)
 
 # Taking significant OTU's ####
 
