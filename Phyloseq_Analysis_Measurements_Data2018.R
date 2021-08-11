@@ -387,37 +387,14 @@ library(metacoder)
 
 tax_m18 = parse_phyloseq(physeq_count18_measure)
 
-tax_m18 %>% 
-heat_tree(node_label = taxon_names,
-          node_size = n_obs, 
-          node_color = n_obs, 
-          node_color_axis_label = "OTU count",
-          layout = "fruchterman-reingold", initial_layout = "reingold-tilford", 
-          title = "Taxa in leafs")
-
-heat_tree(tax_m18,
-          node_label = taxon_names(tax_m18),
-          node_size = n_obs(tax_m18),
-          node_color = n_obs(tax_m18))
-
-set.seed(2)
-tax_m18 %>% 
-heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
-          node_size = n_obs,
-          node_color = n_obs,
-          node_color_axis_label = "OTU count",
-          layout = "davidson-harel", initial_layout = "reingold-tilford")
-
-set.seed(2)
+set.seed(4)
 tax_m18 %>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
-            node_color = n_supertaxa,
-            node_color_range = c("red", "yellow", "green", "blue"), 
+            node_color = n_obs,
             initial_layout = "reingold-tilford",layout = "davidson-harel",
-            title = "Measurement Taxa",
-            node_color_axis_label = "Number of Taxa",
-            node_size_axis_label = "Number of OTUs")
+            title = "Measurement Taxa 2018",
+            node_color_axis_label = "Number of OTUs")
 
 ggsave(filename = "Heat Tree for Measurements 2018.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 7, height = 5)             
 

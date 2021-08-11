@@ -146,6 +146,8 @@ plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
   stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
 
+?plot_richness
+
 hist(richness17$Shannon, main="Shannon index", xlab="")
 hist(richness17$Simpson, main="Simpson index", xlab="")
 
@@ -205,7 +207,6 @@ plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color
   stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17_weight, label = "p.signif", symnum.args = symnum.args17)
 
 #Question 3 ####
-
 
 #Adding new column for average weight
 

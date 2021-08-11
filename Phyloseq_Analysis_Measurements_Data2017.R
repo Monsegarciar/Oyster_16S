@@ -359,30 +359,64 @@ write.csv(taxa_measure17, file = "Data/taxa_measure17.csv")
 taxa_measure17 <- read.csv("Data/taxa_measure17.csv")
 
 # Heat Trees for Measurements ####
+meta17_data <- read.csv("Data/meta17_data_update.csv")
 
+asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 
-tax_m = parse_phyloseq(physeq_count17_weight) 
-heat_tree(tax_m, node_label = taxon_names,
-          node_size = n_obs(tax_m), 
-          node_color = n_obs(tax_m), 
-          layout = "da", initial_layout = "re", 
-          title = "Taxa in Width")
+#Changing row names in "meta_17" data
+rownames(meta17_data)= meta17_data$UniqueID
+meta17_data$UniqueID=NULL
+meta17_data$X=NULL
+head(rownames(meta17_data))
 
-heat_tree(tax_m)
-tax_m %>% 
-  heat_tree(node_label = taxon_names, node_size = n_obs(tax_m), 
-            node_color = n_obs(tax_m), layout = "automatic", initial_layout = "fruchterman-reingold")
+#Changing row names in "asvtable_17" data
+rownames(asvtable_17)= asvtable_17$V1
+asvtable_17$V1=NULL
+head(rownames(asvtable_17))
 
-# Taxa for Measurements 
+#Changing row names in taxa
 rownames(taxa_measure17)= taxa_measure17$X
 taxa_measure17$X = NULL
-tax_measure17 = parse_tax_data(taxa_measure17)
-tax_measure17
-heat_tree(tax_measure17, node_label = taxon_names,
-          node_size = n_obs(tax_measure17), 
-          node_color = n_obs(tax_measure17), 
-          layout = "automatic", initial_layout = "automatic", 
-          title = "Taxa in Measurements")
+
+#Setting taxmat and otumat
+taxmat17_weight=taxa_measure17
+otumat17_weight=asvtable_17
+
+#Converting to matrix
+otu_matrix17_weight= as.matrix(otumat17_weight, rownames = rownames(asvtable_17))
+
+tax_matrix17_weight=as.matrix(taxmat17_weight)
+View(OTU17_weight)
+
+meta17_data_weight=as.data.frame(meta17_data)
+
+#Setting OTU, TAX, and SAMP
+OTU17_weight= otu_table(otu_matrix17_weight, taxa_are_rows = FALSE)
+
+TAX17_weight= tax_table(tax_matrix17_weight)
+
+SAMP17_weight= sample_data(meta17_data)
+
+OTU_count17_weight=transform_sample_counts(OTU17_weight, function(x) 1E6 * x/sum(x))
+
+# Phyloseq Class
+physeq_class17_measure = phyloseq(OTU17_weight, TAX17_weight, SAMP17_weight)
+physeq_class17_measure
+
+physeq_count17_measure = phyloseq(OTU_count17_weight, TAX17_weight, SAMP17_weight)
+physeq_count17_measure
+
+tax_m = parse_phyloseq(physeq_count17_measure) 
+
+tax_m %>% 
+  heat_tree(node_label = taxon_names,
+            node_size = n_obs,
+            node_color = n_obs,
+            initial_layout = "reingold-tilford",layout = "davidson-harel",
+            title = "Measurement Taxa 2017",
+            node_color_axis_label = "Number of OTUs")
+
+ggsave(filename = "Heat Tree for Measurements 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)             
 
 # geom_col()
 # RFTM_dds18 <- phyloseq_to_deseq2(physeq_class, ~RFTM_score.x+Species)
