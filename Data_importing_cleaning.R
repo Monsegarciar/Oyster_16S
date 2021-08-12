@@ -72,11 +72,30 @@ physeq= phyloseq(OTU, TAX)
 physeq
 
 plot_bar(physeq, fill = "Family")
+a_my_comparisons17_3 <- list(c("0.5", "1"), c("0.5", "2"), c("0.5", "3"), c("0.5", "4"), c("0.5", "5"), c("2", "5"))
+a_my_comparisons17_2 <- list(c("0", "1"), c("0", "2"), c("0", "3"), c("0", "4"), c("0", "5"), c("1", "5"))
+a_my_comparisons17 <- list(c("0", "0.5"), c("0.5", "1"), c("1", "2"), c("2", "3"), c("3", "4"), c("4", "5"))
+symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+#Statistical Analysis ####
+# Height 
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Height_delta, colour= RFTM_score.x)) + geom_point() +  geom_boxplot(alpha=0.3) + labs(title = "Height Growth in Oysters", x= "RFTM Score", y= "Normalized Height", caption = "2017 Data") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ggsave(filename = "Height Growth Statistics in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)
 
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Height_delta, colour= RFTM_score.x)) + geom_point() +  geom_boxplot(alpha=0.3) + labs(title = "Height Growth in Oysters", x= "RFTM Score", y= "Normalized Height", caption = "2017 Data") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17_2, label = "p.signif", symnum.args = symnum.args17)
 
+# 0.5 Analysis
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Height_delta, colour= RFTM_score.x)) + geom_point() +  geom_boxplot(alpha=0.3) + labs(title = "Height Growth in Oysters", x= "RFTM Score", y= "Normalized Height", caption = "2017 Data") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17_3, label = "p.signif", symnum.args = symnum.args17)
 
+# Weight
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Weight_delta, colour= RFTM_score.x)) + geom_point()+ geom_boxplot(alpha=0.3) + labs(title = "Weight Growth in Oysters", x= "RFTM Score", y= "Normalized Weight") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ #+ scale_y_continuous(limits=c(0, 50)) 
 
+# Length
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Length_delta, colour= RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Length Growth in Oysters", x= "RFTM Score", y= "Normalized Length") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+
+# Width 
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y = Width_delta, colour= RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Width Growth in Oysters", x= "RFTM Score", y= "Normalized Width") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
 
 
 
