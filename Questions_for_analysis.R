@@ -72,6 +72,7 @@ plot_bar(pp.ch) #Plot bar of samples(x) and abundance (y) of Proteobacteria
 bar1=plot_bar(pp.ch, x="Site.x", fill = "Genus")
 print(bar1)
 
+# Colot Palette
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(442)
 plot_bar(pp.ch,  fill="Genus.x", x="Treatment2") +
   geom_bar(aes(color=Genus.x, fill=Genus.x), stat="identity", position="stack")+
@@ -94,7 +95,7 @@ b2 + geom_point(aes(x=Family, y=Abundance), color="black", position="jitter", si
 TopNOTUs <- names(sort(taxa_sums(physeq_class17), TRUE)[1:10])
 phys10 <- prune_species(TopNOTUs, physeq_class17)
 
-
+# Plot Bar with Treatment and Site
 p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus, title= "Top NOTUs SIte and Treatment 2017") # Switching Treatment w/ site
 print(p)
 
@@ -138,15 +139,16 @@ plot_richness(physeq_class17, x="Site.x", measures=c("Shannon", "Simpson"), colo
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
+# Making cutpoints and significance values
 a_my_comparisons17 <- list(c("NW", "OY"), c("OY", "SW"), c("NW", "SW"))
 symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+# Richness plot with statistical values 
 plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x", title = "Boxplot of Sites 2017")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
   stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
 
-?plot_richness
 
 hist(richness17$Shannon, main="Shannon index", xlab="")
 hist(richness17$Simpson, main="Simpson index", xlab="")
@@ -158,9 +160,11 @@ plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon", "Simpson"), col
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))
 
+# Making cutpoints and significance values
 a_my_comparisons18 <- list(c("HIGH_MONO", "HIGH_POLY"), c("LOW_MONO", "LOW_POLY"), c("HIGH_POLY", "LOW_MONO"), c("HIGH_MONO", "LOW_POLY"), c("HIGH_MONO", "LOW_MONO"), c("HIGH_POLY", "LOW_POLY"))
 symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+# Richness plot with statistical values
 plot_richness(physeq_class18, x="Bucket2", measures=c("Shannon","Simpson"), color = "Bucket2", title = "Boxplot of Treatments 2018")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -171,16 +175,17 @@ hist(richness18$Shannon, main="Shannon index", xlab="")
 
 #Question 2 ####
 #Looking at pea crabs in sites or treatments 
-
 # Plot bars 
-# Plot ordination  diverse those with 
+# Plot ordination
 
 # RFTM Score and Species (Alpha Diversity)
 plot_richness(physeq_class18, x= "Species2.x", color = "RFTM_score.x", measures = c("Simpson", "Shannon"), title = "RFTM Score in Species 2018")
 
+# Making cutpoints and significance values
 a_my_comparisons18_Species <- list(c("AM", "CV"), c("IR", "LP"), c("CV", "IR"))
 symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+# Richness plot with statistical values
 plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), color = "RFTM_score.x", title = "Boxplot of RFTM Scores and Species 2018")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -189,6 +194,7 @@ plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), c
 #Alpha Diversity of Species Significance
 plot_richness(physeq_class18, x= "Species2.x", color = "Species2.x", measures = c("Simpson", "Shannon"), title = "Diveristy of Species 2018")
 
+# Richness plot with statistical values
 plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), color = "Species2.x", title = "Boxplot of Species 2018")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -198,9 +204,11 @@ plot_richness(physeq_class18, x="Species2.x", measures=c("Shannon","Simpson"), c
 # Pea crabs and Sites 
 plot_richness(physeq_class17, x= "Site.x", color = "Weight_diff", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for 2017") 
 
+# Making cutpoints and significance values
 a_my_comparisons17_weight <- list(c("NW", "OY"), c("OY", "SW"), c("NW", "SW"))
 symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+# Richness plot with statistical values
 plot_richness(physeq_class17, x="Site.x", measures=c("Shannon","Simpson"), color = "Weight_diff", title = "Boxplot of Weight 2018")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -362,7 +370,7 @@ physeq_class17
 head(sample_data(physeq_class17)$Treatment2)
 physeq_class17= subset_samples(physeq_class17, )
 
-# RFTM SCORE with DESeq2- 2017 Data
+# RFTM SCORE with DESeq2- 2017 Data ####
 deseq17_score = phyloseq_to_deseq2(physeq_class17, ~ RFTM_score.y)
 deseq17_score = DESeq(deseq17_score, test="Wald", fitType="parametric")
 
@@ -387,7 +395,7 @@ sigtab17_score$Class = factor(as.character(sigtab17_score$Class), levels=names(x
 ggplot(sigtab17_score, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
-# Peacrabs with DESeq2- 2017 Data
+# Peacrabs with DESeq2- 2017 Data ####
 deseq17_pea = phyloseq_to_deseq2(physeq_class17, ~ peacrabs.x)
 deseq17_pea = DESeq(deseq17_pea, test="Wald", fitType="parametric")
 
@@ -413,7 +421,7 @@ sigtab17_pea$Class = factor(as.character(sigtab17_pea$Class), levels=names(x))
 ggplot(sigtab17_pea, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
-# Average Weight with DESeq2- 2017 Data
+# Average Weight with DESeq2- 2017 Data ####
 physeq_class17 = subset_samples(physeq_class17, Weight_delta != "NA")
 
 deseq17_weight = phyloseq_to_deseq2(physeq_class17, ~ Weight_delta)
@@ -442,7 +450,7 @@ ggplot(sigtab17_weight, aes(x=Order, y=log2FoldChange, color=Phylum)) + geom_poi
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
 
 
-# RFTM score with DESeq2- 2018 Data
+# RFTM score with DESeq2- 2018 Data ####
 estimateSizeFactors(physeq_class18, type = 'iterate')
 
 physeq_class18 = subset_samples(physeq_class18, Weight_avg18 != "NA")
