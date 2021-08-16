@@ -111,9 +111,11 @@ print(p1)
 plot_richness(physeq_class17_weight, x="Site.x", measures=c("Simpson", "Shannon"))
 plot_richness(physeq_class17_weight, x= "Site.x", color = "Treatment2", measures = c("Simpson", "Shannon"))
 
+# Setting Cutpoints and Statistical Significance Values
 a_my_comparisons17_w <- list(c("NW", "OY"), c("OY", "SW"), c("NW", "SW"))
 symnum.args17_w = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
+# Plotting with statitiscal Analysis
 plot_richness(physeq_class17_weight, x="Site.x", measures=c("Shannon","Simpson"), color = "Site.x", title = "Boxplot of Weights and Sites 2017")+
   geom_boxplot(alpha=0.6)+ 
   theme(legend.position="none", axis.text.x=element_text(angle=45,hjust=1,vjust=1,size=12))+
@@ -122,6 +124,7 @@ plot_richness(physeq_class17_weight, x="Site.x", measures=c("Shannon","Simpson")
 plot_ordination(physeq_count17_weight, Phy.ord, type = "split", 
                 color = "Phylum", shape = "Site.x")
 
+# Saving Richness Plot
 ggsave(filename = "Richness Plots", plot=last_plot(), path ="Data2017_plots/", width = 15, height = 8)  
 
 
@@ -406,8 +409,10 @@ physeq_class17_measure
 physeq_count17_measure = phyloseq(OTU_count17_weight, TAX17_weight, SAMP17_weight)
 physeq_count17_measure
 
+# Converting phyloseq to taxmap
 tax_m = parse_phyloseq(physeq_count17_measure) 
 
+# Tax Tree 
 tax_m %>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
@@ -416,6 +421,7 @@ tax_m %>%
             title = "Measurement Taxa 2017",
             node_color_axis_label = "Number of OTUs")
 
+# Saving heat tree graph 
 ggsave(filename = "Heat Tree for Measurements 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)             
 
 # geom_col()
