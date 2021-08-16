@@ -210,6 +210,9 @@ neg_otus18 <- subset(neg_otus18, select = -c(Kingdom.y, Phylum.y, Class.y, Order
                                              pvalue, padj, log2FoldChange))
 colnames(neg_otus18) <- c("Row.names", "Kingdom", "Phylum", "Class", "Order", 
                               "Family", "Genus.x","Genus.y", "Species")
+
+write.csv(neg_otus18, file = "Data/neg_otus18.csv")
+
 # Loading Data
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
 
@@ -255,7 +258,7 @@ physeq_count18_negotu
 
 tax_negotu18 = parse_phyloseq(physeq_count18_negotu)
 
-set.seed(4)
+set.seed(3)
 tax_negotu18 %>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
@@ -285,6 +288,9 @@ pos_otus18 <- subset(pos_otus18, select = -c(Kingdom.y, Phylum.y, Class.y, Order
                                              pvalue, padj, log2FoldChange))
 colnames(pos_otus18) <- c("Row.names", "Kingdom", "Phylum", "Class", "Order", 
                           "Family", "Genus.x","Genus.y", "Species")
+
+write.csv(pos_otus18, file = "Data/pos_otus18.csv")
+
 # Loading Data
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
 
@@ -328,9 +334,12 @@ physeq_class18_posotu
 physeq_count18_posotu = phyloseq(OTU_count18, TAX18, SAMP18)
 physeq_count18_posotu
 
+# Heat Tree
+
+# Converting phyloseq into taxmap
 tax_posotu18 = parse_phyloseq(physeq_count18_posotu)
 
-set.seed(4)
+# Heat Tree
 tax_posotu18 %>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
@@ -339,7 +348,8 @@ tax_posotu18 %>%
             title = "Measurement Taxa: Positive OTUs 2018",
             node_color_axis_label = "Number of OTUs")
 
-ggsave(filename = "Heat Tree for Measurements 2018_Positive OTUs.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 7, height = 5) 
+# Saving Heat Tree 
+ggsave(filename = "Heat Tree for Measurements 2018_Positive OTUs2.jpeg", plot=last_plot(), path ="Data2018_plots/", width = 7, height = 5) 
 
 # Taking significant OTU's ####
 

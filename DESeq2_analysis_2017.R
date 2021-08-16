@@ -207,7 +207,10 @@ pos_otus_17 <- subset(pos_otus_17, select= -c(log2FoldChange))
 
 colnames(pos_otus_17) <- c("Row.names","Kingdom", "Phylum", "Class", "Order", 
                               "Family", "Genus.x","Genus.y", "Species")
-# Tax tree
+
+write.csv(pos_otus_17, file = "Data/pos_otus17.csv")
+
+# Tax tree ####
 meta17_data <- read.csv("Data/meta17_data_update.csv")
 
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
@@ -276,6 +279,8 @@ neg_otus_17= merge(neg_otus_17, neg_otus_length, by = "row.names")
 neg_otus_17<- subset(neg_otus_17, select = -c(Kingdom.y, Phylum.y, Class.y, Order.y, Family.y, Genus.x.y, Genus.y.y, Species.y, 
                                               Row.names, baseMean, lfcSE, stat, pvalue, padj, log2FoldChange))
 
+write.csv(neg_otus_17, file = "Data/neg_otus17.csv")
+
 #Changing row names in "meta_17" data
 rownames(meta17_data)= meta17_data$UniqueID
 meta17_data$UniqueID=NULL
@@ -319,8 +324,10 @@ physeq_class17_negotu
 physeq_count17_negotu = phyloseq(OTU_count17, TAX17, SAMP17)
 physeq_count17_negotu
 
-set.seed(4)
+# Converting the phyloseq into a taxmap
 tax_otu17_neg = parse_phyloseq(physeq_count17_negotu)
+
+# Heat Tree
 tax_otu17_neg%>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
@@ -328,8 +335,9 @@ tax_otu17_neg%>%
             initial_layout = "reingold-tilford",layout = "davidson-harel",
             title = "Measurement Taxa 2017: Negative OTUs",
             node_color_axis_label = "Number of OTUs")
-tax_otu17_neg
-ggsave(filename = "Heat Tree for Measurements 2017_Negative OTUs.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5) 
+
+# Saving Heat Tree
+ggsave(filename = "Heat Tree for Measurements 2017_Negative OTUs2.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5) 
 
 # Taking out the significant OTU's ####
 
