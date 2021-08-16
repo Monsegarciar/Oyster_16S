@@ -385,9 +385,10 @@ library(metacoder)
 
 # Heat Tree with Measurement taxa
 
+# Converting phyloseq into taxmap
 tax_m18 = parse_phyloseq(physeq_count18_measure)
 
-set.seed(4)
+# Heat Tree
 tax_m18 %>% 
   heat_tree(node_label = taxon_names,
             node_size = n_obs,
