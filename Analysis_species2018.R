@@ -31,6 +31,8 @@ metagen18_clam<- meta_gen18_data %>%
   filter(Species2.x == "LP")
 asvtable_clam18<- asvtable_18[c(31,71,72,86:88)]
 
+# Phyloseq with Oysters 2018 Data ####
+
 #Changing row names in meta_gen18 data
 rownames(metagen18_oys)= metagen18_oys$UniqueID 
 head(rownames(metagen18_oys))
@@ -100,7 +102,7 @@ ggsave(filename = "Width Growth in Oysters 2017.jpeg", plot=last_plot(), path ="
 
 # 2018 Data Statistical Analysis ####
 
-# Setting Cutpints and Significance Values 
+# Setting Cutpoints and Significance Values 
 a_my_comparisons18 <- list(c("0", "0.5"), c("0.5", "1"), c("0", "1"))
 symnum.args18 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
 
