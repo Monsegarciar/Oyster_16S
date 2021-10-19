@@ -19,6 +19,7 @@ meta17_data <- read.csv("Data/meta17_data_update.csv")
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
 Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 
+
 #Changing row names in "Run23_taxa"
 Run123_taxa$V1=NULL
 rownames(Run123_taxa)= Run123_taxa$V2
@@ -111,3 +112,26 @@ tax_17
 
 heat_tree(tax_17)
 
+
+# 2017 Data Statistical Analysis ####
+
+# Setting Cutpoints and Significance Values 
+a_my_comparisons17 <- list(c("0", "0.5"), c("0.5", "1"), c("0", "1"), c("1","2"), c("2","3"), c("3","4"), c("4","5"))
+symnum.args17 = list(cutpoints = c(0, 0.0001, 0.001, 0.01, 0.05, 1), symbols = c("****", "***", "**", "*", "ns"))
+
+# Height
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y =Height_delta , colour = RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Height Growth in Oysters", caption = "2017 Data", x= "RFTM Score", y= "Normalized Height") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ggsave(filename = "Height Growth Statistics in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)
+
+# Weight
+meta17_data_weight <- meta17_data[-c(80),]
+ggplot(data = meta17_data_weight, aes(x = as.factor(RFTM_score.x), y =Weight_delta , colour = RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Weight Growth in Oysters", caption = "2017 Data", x= "RFTM Score", y= "Normalized Weight") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ggsave(filename = "Weight Growth Statistics in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)
+
+# Length
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y =Length_delta , colour = RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Length Growth in Oysters", caption = "2017 Data", x= "RFTM Score Type", y= "Normalized Length") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ggsave(filename = "Length Growth Statistics in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)
+
+# Width
+ggplot(data = meta17_data, aes(x = as.factor(RFTM_score.x), y =Width_delta , colour = RFTM_score.x)) + geom_point() + geom_boxplot(alpha=0.3) + labs(title = "Width Growth in Oysters", caption = "2017 Data", x= "RFTM Score", y= "Normalized Width") +  stat_compare_means(method = "wilcox.test", comparisons = a_my_comparisons17, label = "p.signif", symnum.args = symnum.args17)
+ggsave(filename = "Width Growth Statistics in Oysters 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 7, height = 5)
