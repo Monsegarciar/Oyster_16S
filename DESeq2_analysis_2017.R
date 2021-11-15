@@ -74,6 +74,11 @@ neg_otus_weight <- sigtab17_weight %>%
 pos_otus_weight <- sigtab17_weight %>% 
   filter(log2FoldChange > 0)
 
+pos_otus_weight2 <- subset(pos_otus_weight, select = -c(baseMean, log2FoldChange, 
+                                                        lfcSE, stat, pvalue, padj))
+write.csv(pos_otus_weight2, file = "Data/pos_otus_weight.csv")
+pos_otus17 <- read.csv("Data/pos_otus17.csv")
+
 # Normalized Height with DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Height_delta != "NA")
 
@@ -112,6 +117,10 @@ neg_otus_height <- sigtab17_height %>%
 pos_otus_height <- sigtab17_height %>% 
   filter(log2FoldChange > 0)
 
+pos_otus_height2 <- subset(pos_otus_height, select = -c(baseMean, log2FoldChange, 
+                                                        lfcSE, stat, pvalue, padj))
+write.csv(pos_otus_height2, file = "Data/pos_otus_height.csv")
+
 # Normalized Length DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Length_delta != "NA")
 
@@ -142,13 +151,17 @@ ggplot(sigtab17_length, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_poi
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Length- Phylum and Class 2017")
 
 ggsave(filename = "Normalized Length Phylum and Class 2017.jpeg", plot=last_plot(), path ="Data2017_plots/", width = 17, height = 8)  
- 
+
 # Taking out negative and positive OTU's
 
 neg_otus_length <- sigtab17_length %>% 
   filter(log2FoldChange < 0)
 pos_otus_length <- sigtab17_length %>% 
   filter(log2FoldChange > 0)
+
+pos_otus_length2 <- subset(pos_otus_length, select = -c(baseMean, log2FoldChange, 
+                                                        lfcSE, stat, pvalue, padj))
+write.csv(pos_otus_length2, file = "Data/pos_otus_length.csv")
 
 # Normalized Width DESeq2- 2017 Data ####
 physeq_count17 = subset_samples(physeq_count17, Width_delta != "NA")
@@ -188,6 +201,10 @@ neg_otus_width <- sigtab17_width %>%
 pos_otus_width <- sigtab17_width %>% 
   filter(log2FoldChange > 0)
 
+pos_otus_width2 <- subset(pos_otus_width, select = -c(baseMean, log2FoldChange, 
+                                                        lfcSE, stat, pvalue, padj))
+write.csv(pos_otus_width2, file = "Data/pos_otus_width.csv")
+
 # Merging the positive otus ####
 
 pos_otus_17 = merge(pos_otus_height, pos_otus_length, by= "row.names")
@@ -209,6 +226,8 @@ colnames(pos_otus_17) <- c("Row.names","Kingdom", "Phylum", "Class", "Order",
                               "Family", "Genus.x","Genus.y", "Species")
 
 write.csv(pos_otus_17, file = "Data/pos_otus17.csv")
+
+pos_otus17 <- read.csv("Data/meta17_data_update.csv")
 
 # Tax tree ####
 meta17_data <- read.csv("Data/meta17_data_update.csv")

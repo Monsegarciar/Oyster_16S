@@ -129,6 +129,8 @@ ggplot(data = metagen18_oys, aes(x = Weight_diff, y = Weight_delta, colour = Buc
 
 ggplot(data = meta17_data, aes(x = Height_diff, y = Height_delta, colour = Treatment2)) + geom_point() + facet_wrap(~Treatment2) + labs(title = "Height Growth in Oysters", caption = "2017 Data", x= "Height Difference", y= "Normalized Height")
 
+# 2017 Data 
+
 # Treatment Statistical Analysis ####
 
 # Settign Cutpoints and Statistical Significance
