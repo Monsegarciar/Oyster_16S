@@ -31,11 +31,35 @@ physeq_count18_posotu <- readRDS("Data/physeq_count18_posotu.rds")
   
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors 
 
-plot_bar(physeq_count17_posotu, x= "Sample", fill= "Genus.x")
-
+plot_bar(physeq_count17_posotu, x="Species.x", fill= "Genus.x") +
+  geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
+  facet_grid(~Site.x, scales="free_x") +
+  scale_fill_manual(values = mycolors) +
+  scale_color_manual(values = mycolors) +
+  theme_bw() +
+  theme(legend.position = "right", panel.border = element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        axis.line = element_line(color = "black"), 
+        axis.text.x = element_blank(), 
+        text = element_text(size=20))
+  
 #Positive OTUs 2018 
+mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(65) # How many colors 
 
-plot_bar(physeq_count18_posotu, x= "Sample", fill= "Genus.x")
+plot_bar(physeq_count18_posotu, x= "Species2.x", fill= "Genus.x")+
+  geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
+  facet_grid(~Bucket2, scales="free_x") +
+  scale_fill_manual(values = mycolors2) +
+  scale_color_manual(values = mycolors2) +
+  theme_bw() +
+  theme(legend.position = "right", panel.border = element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        axis.line = element_line(color = "black"), 
+        axis.text.x = element_blank(), 
+        text = element_text(size=10))
+
 
 
 
