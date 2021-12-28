@@ -21,10 +21,11 @@ library(DESeq2)
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
 asvtable_17<- fread("Data/asvtable_de17 - Copy.csv")
+physeq_class17 <- readRDS("Data/physeq_class17.rds")
 
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
 asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
-
+physeq_class18 <- readRDS("Data/physeq_class18.rds")
 
 
 #Loading Physeq w/out transform_sample_counts() function
@@ -96,7 +97,7 @@ TopNOTUs <- names(sort(taxa_sums(physeq_class17), TRUE)[1:10])
 phys10 <- prune_species(TopNOTUs, physeq_class17)
 
 # Plot Bar with Treatment and Site
-p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~Genus, title= "Top NOTUs SIte and Treatment 2017") # Switching Treatment w/ site
+p= plot_bar(phys10, "Treatment2", fill="Site.x", facet_grid=~ Genus, title= "Top NOTUs SIte and Treatment 2017") # Switching Treatment w/ site
 print(p)
 
 p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
@@ -105,7 +106,7 @@ p + geom_bar(aes(color=Site.x, fill=Site.x), stat="identity", position="stack")
 TopNOTUs18 <- names(sort(taxa_sums(physeq_class18), TRUE)[1:20])
 phys20_18 <- prune_species(TopNOTUs18, physeq_class18)
 
-p_2= plot_bar(phys20_18, "Bucket2", fill="Species2.x", facet_grid=~Genus, 
+plot_bar(phys20_18, "Bucket2", fill="Species2.x", facet_grid=~Genus, 
              title= "Top NOTUs in Species and Treatment 2018") # Switching Treatment w/ site
 print(p)
 
