@@ -334,6 +334,10 @@ physeq_class18_posotu
 physeq_count18_posotu = phyloseq(OTU_count18, TAX18, SAMP18)
 physeq_count18_posotu
 
+#Saving pos otu in physeq class 2018 
+saveRDS(physeq_count18_posotu, "Data/physeq_count18_posotu.rds")
+saveRDS(physeq_class18_posotu, "Data/physeq_class18_posotu.rds")
+
 # Heat Tree
 
 # Converting phyloseq into taxmap

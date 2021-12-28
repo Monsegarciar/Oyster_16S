@@ -246,11 +246,11 @@ asvtable_17$V1=NULL
 head(rownames(asvtable_17))
 
 #Changing row names in taxa
-rownames(pos_otus_17)= pos_otus_17$Row.names
-pos_otus_17$Row.names = NULL
+rownames(pos_otus17)= pos_otus17$Row.names
+pos_otus17$Row.names = NULL
 
 #Setting taxmat and otumat
-taxmat17_weight=pos_otus_17
+taxmat17_weight=pos_otus17
 otumat17_weight=asvtable_17
 
 #Converting to matrix
@@ -276,6 +276,10 @@ physeq_class17_posotu
 
 physeq_count17_posotu = phyloseq(OTU_count17_weight, TAX17_weight, SAMP17_weight)
 physeq_count17_posotu
+
+#Saving pos otu in physeq class 2017 
+saveRDS(physeq_count17_posotu, "Data/physeq_count17_posotu.rds")
+saveRDS(physeq_class17_posotu, "Data/physeq_class17_posotu.rds")
 
 tax_otu17 = parse_phyloseq(physeq_count17_posotu)
 tax_otu17%>% 
