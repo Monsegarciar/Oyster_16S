@@ -10,6 +10,9 @@ library(data.table)
 library(dplyr)
 library(tidyr)
 library(DESeq2)
+library(phyloseq)
+
+?phyloseq
 
 #Loading Data
 pos_otus17 <- read.csv("Data/pos_otus17.csv")
@@ -27,11 +30,13 @@ physeq_count18_posotu <- readRDS("Data/physeq_count18_posotu.rds")
 
  #https://tidyverse.tidyverse.org/
 
-#Positive OTUs 2017 
-  
-mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(2) # How many colors 
 
-plot_bar(physeq_count17_posotu, x="Species.x", fill= "Genus.x") +
+#Positive OTUs 2017 
+
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(72) # How many colors 
+physeq_ccount17_posotu2 = subset_taxa(physeq_count17_posotu, Genus.x != "NA")
+
+plot_bar(physeq_ccount17_posotu2, x="Sample", fill= "Genus.x") +
   geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
   facet_grid(~Site.x, scales="free_x") +
   scale_fill_manual(values = mycolors) +
@@ -46,8 +51,10 @@ plot_bar(physeq_count17_posotu, x="Species.x", fill= "Genus.x") +
   
 #Positive OTUs 2018 
 mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(65) # How many colors 
+physeq_count18_posotu2 = subset_taxa(physeq_count18_posotu, Genus.x != "NA")
 
-plot_bar(physeq_count18_posotu, x= "Species2.x", fill= "Genus.x")+
+# Change x to unique id or samples 
+plot_bar(physeq_count18_posotu2, x= "Samples", fill= "Genus.x")+
   geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
   facet_grid(~Bucket2, scales="free_x") +
   scale_fill_manual(values = mycolors2) +
@@ -62,6 +69,18 @@ plot_bar(physeq_count18_posotu, x= "Species2.x", fill= "Genus.x")+
 
 
 
+plot_bar(physeq_count18_posotu2, x= "UniqueID", fill= "Genus.x")+
+  geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
+  facet_grid(~Bucket2, scales="free_x") +
+  scale_fill_manual(values = mycolors2) +
+  scale_color_manual(values = mycolors2) +
+  theme_bw() +
+  theme(legend.position = "right", panel.border = element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        axis.line = element_line(color = "black"),
+        axis.text.x = element_text(angle=90, hjust=1),
+        text = element_text(size=9)) #35x20Pic
 
 
 
