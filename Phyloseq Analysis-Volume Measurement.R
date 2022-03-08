@@ -70,8 +70,9 @@ pos_otus17 <- read.csv("Data/pos_otus_volume.csv")
 
 #Changing row names in "meta_17" data
 rownames(meta17_data)= meta17_data$UniqueID
-meta17_data$UniqueID=NULL
+meta17_data$X.2=NULL
 meta17_data$X=NULL
+meta17_data$X.1=NULL
 head(rownames(meta17_data))
 
 #Changing row names in "asvtable_17" data

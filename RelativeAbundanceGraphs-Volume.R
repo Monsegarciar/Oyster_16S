@@ -39,8 +39,8 @@ plot_bar(physeq_count17_posotuvol, x="UniqueID", fill= "Genus.x") +
         panel.grid.major.x = element_blank(), 
         panel.grid.minor.x = element_blank(), 
         axis.line = element_line(color = "black"), 
-        axis.text.x = element_blank(), 
-        text = element_text(size=20))
+        axis.text.x = element_text(angle=90, hjust=1), 
+        text = element_text(size=9))
 
 #Positive OTUs 2018 
 mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(78) # How many colors 
