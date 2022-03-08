@@ -11,7 +11,7 @@ require(data.table)
 require("ggpubr")
 require(dplyr)
 require(tidyr)
-
+library("ggpubr")
 # Loading Data
 physeq_count17 <- readRDS("Data/physeq_count17.rds")
 physeq_count17
@@ -114,4 +114,105 @@ physeq_count17_posotuvol
 #Saving pos otu in physeq class 2017 
 saveRDS(physeq_count17_posotuvol, "Data/physeq_count17_posotuvol.rds")
 saveRDS(physeq_class17_posotuvol, "Data/physeq_class17_posotuvol.rds")
+
+
+physeq_class18 <- readRDS("Data/physeq_class18.rds")
+physeq_count18 <- readRDS("Data/physeq_count18.rds")
+
+# Normalized Weight with DESeq2- 2018 Data
+physeq_count18 = subset_samples(physeq_count18, Volume_delta != "NA")
+
+deseq18_volume = phyloseq_to_deseq2(physeq_count18, ~ Volume_delta)
+
+gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
+geoMeans = apply(OTU_count18, 2, gm_mean)
+deseq18_volume = estimateSizeFactors(deseq18_volume, geoMeans=geoMeans, locfunc=shorth)
+deseq18_volume = DESeq(deseq18_volume, test="Wald", fitType="parametric")
+
+# change 1= mean across rows 
+res18_volume = results(deseq18_volume, cooksCutoff = FALSE)
+alpha = 0.05
+sigtab18_volume = res18_volume[which(res18_volume$padj < alpha), ]
+sigtab18_volume = cbind(as(sigtab18_volume, "data.frame"), as(tax_table(physeq_count18)[rownames(sigtab18_volume), ], "matrix"))
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+# Phylum 
+x = tapply(sigtab18_volume$log2FoldChange, sigtab18_volume$Phylum, function(x) max(x))
+x = sort(x, TRUE)
+sigtab18_volume$Phylum = factor(as.character(sigtab18_volume$Phylum), levels=names(x))
+
+# Order
+x = tapply(sigtab18_volume$log2FoldChange, sigtab18_volume$Family, function(x) max(x))
+x = sort(x, TRUE)
+sigtab18_volume$Family = factor(as.character(sigtab18_volume$Family), levels=names(x))
+
+ggplot(sigtab18_volume, aes(x=Family, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Normalized Volume- Phylum and Family 2018")
+
+# Taking out negative and positive OTU's
+
+neg_otus_volume18 <- sigtab18_volume %>% 
+  filter(log2FoldChange < 0)
+pos_otus_volume18 <- sigtab18_volume %>% 
+  filter(log2FoldChange > 0)
+
+pos_otus_volume18 <- subset(pos_otus_volume18, select = -c(baseMean, log2FoldChange, 
+                                                        lfcSE, stat, pvalue, padj))
+write.csv(pos_otus_volume18, file = "Data/pos_otus_volume18.csv")
+pos_otus_volume18 <- read.csv("Data/pos_otus_volume.csv")
+write.csv(neg_otus_volume18, file = "Data/neg_otus_volume18.csv")
+
+# Phyloseq Volume-2018 ####
+
+# Loading Data
+meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
+
+asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
+
+#Changing rownames of new taxa table
+rownames(pos_otus_volume18)= pos_otus_volume18$X
+pos_otus_volume18$X = NULL
+
+#Changing row names in meta_gen18 data
+rownames(meta_gen18_data)= meta_gen18_data$UniqueID 
+head(rownames(meta_gen18_data))
+
+#Changing rownames in asvtable data
+rownames(asvtable_18)= asvtable_18$V1
+head(rownames(asvtable_18))
+
+#Setting taxmat and otumat
+taxmat18= pos_otus_volume18
+otumat18=asvtable_18
+
+#Converting to matrix
+otu_matrix18= as.matrix(otumat18, rownames = "V1")
+
+tax_matrix18=as.matrix(taxmat18)
+
+meta_gen18_data=as.data.frame(meta_gen18_data)
+
+#Setting OTU, TAX, and SAMP
+OTU18= otu_table(otu_matrix18, taxa_are_rows = FALSE)
+
+TAX18= tax_table(tax_matrix18)
+
+SAMP18= sample_data(meta_gen18_data)
+
+OTU_count18=transform_sample_counts(OTU18, function(x) 1E6 * x/sum(x))
+
+physeq_class18_posotuvol = phyloseq(OTU18, TAX18, SAMP18)
+physeq_class18_posotuvol
+
+physeq_count18_posotuvol = phyloseq(OTU_count18, TAX18, SAMP18)
+physeq_count18_posotuvol
+
+#Saving pos otu in physeq class 2018 
+saveRDS(physeq_count18_posotuvol, "Data/physeq_count18_posotuvol.rds")
+saveRDS(physeq_class18_posotuvol, "Data/physeq_class18_posotuvol.rds")
+
+
 
