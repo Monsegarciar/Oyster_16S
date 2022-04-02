@@ -36,7 +36,7 @@ physeq_count18_posotu <- readRDS("Data/physeq_count18_posotu.rds")
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(72) # How many colors 
 physeq_ccount17_posotu2 = subset_taxa(physeq_count17_posotu, Genus.x != "NA")
 
-plot_bar(physeq_ccount17_posotu2, x="Sample", fill= "Genus.x") +
+plot_bar(physeq_ccount17_posotu2, x="UniqueID", fill= "Genus.x") +
   geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
   facet_grid(~Site.x, scales="free_x") +
   scale_fill_manual(values = mycolors) +
@@ -54,7 +54,7 @@ mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(65) # How many colors
 physeq_count18_posotu2 = subset_taxa(physeq_count18_posotu, Genus.x != "NA")
 
 # Change x to unique id or samples 
-plot_bar(physeq_count18_posotu2, x= "Samples", fill= "Genus.x")+
+plot_bar(physeq_count18_posotu2, x= "UniqueID", fill= "Genus.x")+
   geom_bar(aes(color=Genus.x, fill = Genus.x), stat = "identity", position = "stack") +
   facet_grid(~Bucket2, scales="free_x") +
   scale_fill_manual(values = mycolors2) +
