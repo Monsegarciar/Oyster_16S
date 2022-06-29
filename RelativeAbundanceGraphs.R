@@ -83,6 +83,25 @@ plot_bar(physeq_count18_posotu2, x= "UniqueID", fill= "Genus.x")+
         text = element_text(size=9)) #35x20Pic
 
 
+#### Volume(scaled) Relative Abundance Graphs #
 
+#2017
+mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(69) # How many colors 
+physeq_counthighs17 = subset_taxa(physeq_counthighs17, Class != "NA")
+
+plot_bar(physeq_counthighs17, x= "Volume_scale", fill= "Class") +
+  geom_bar(aes(color=Class, fill = Class), stat = "identity", position = "stack") +
+  facet_grid(~UniqueID, scales="free_x") +
+  scale_fill_manual(values = mycolors) +
+  scale_color_manual(values = mycolors) +
+  theme_bw() +
+  theme(legend.position = "right", panel.border = element_blank(), 
+        panel.grid.major.x = element_blank(), 
+        panel.grid.minor.x = element_blank(), 
+        axis.line = element_line(color = "black"), 
+        axis.text.x = element_blank(), 
+        text = element_text(size=20))
+# 941 values for Genus.x
+# 317 family 
 
 
