@@ -15,6 +15,7 @@ library(metacoder)
 library(ggtree)
 library(Rcpp)
 library(corrplot)
+library(MASS)
 
 #### 1.Phyloseq Analysis with scaled volume 
 
@@ -48,7 +49,13 @@ sub_significant_highsc17_pos <- subset_taxa(prune_taxa(rownames(significant_high
 df_significant_highsc17_pos <- as.data.frame(tax_table(sub_significant_highsc17_pos))
 write.table(df_significant_highsc17_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2017.csv", quote = FALSE, sep = ",", col.names = T)
 
-plot_heatmap(sub_significant_highsc17_pos, method = "NMDS", distance = "jsd", low = "#66CCFF", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID")
+plotheat <- plot_heatmap(sub_significant_highsc17_pos, method = "NMDS", distance = "jsd", low = "#66CCFF", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID")
+plot(plotheat)
+
+
+png(file="2017Heatmap.png")
+plot(plotheat)
+graphics.off()
 
 #### Negative 
 significant_highsc17_neg <- significant_highsc17[significant_highsc17$log2FoldChange<0, ]
@@ -94,7 +101,7 @@ sub_significant_highsc18_pos <- subset_taxa(prune_taxa(rownames(significant_high
 df_significant_highsc18_pos <- as.data.frame(tax_table(sub_significant_highsc18_pos))
 write.table(df_significant_highsc18_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
 
-plot_heatmap(sub_significant_highsc17_pos, method = "NMDS", distance = "jsd", low = "#66CCFF", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID")
+plot_heatmap(sub_significant_highsc18_pos, method = "NMDS", distance = "jsd", low = "#66CCFF", high = "#000033", na.value = "white", taxa.label = "Family", sample.label = "UniqueID")
 
 #### Negative OTUs
 
