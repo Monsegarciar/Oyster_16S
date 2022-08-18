@@ -402,4 +402,4 @@ ggsave(filename = "Heat Tree for Measurements 2018.jpeg", plot=last_plot(), path
 # Separate mussels and oysters, species and do them independently to see if there is a difference/similarity
 # Plot small oysters from farmer and grew a lot from course of experiments mussels were collected from adulthood and might not have grown more 
 # Oysters are more interesting in knowing how to grow them better and bigger 
- 
+# https://ggplot2.tidyverse.org/reference/ggsave.html

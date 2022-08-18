@@ -12,6 +12,7 @@ require("ggpubr")
 require(dplyr)
 require(tidyr)
 library("ggpubr")
+
 # Loading Data
 physeq_count17 <- readRDS("Data/physeq_count17.rds")
 physeq_count17
@@ -214,6 +215,125 @@ physeq_count18_posotuvol
 #Saving pos otu in physeq class 2018 
 saveRDS(physeq_count18_posotuvol, "Data/physeq_count18_posotuvol.rds")
 saveRDS(physeq_class18_posotuvol, "Data/physeq_class18_posotuvol.rds")
+
+# Phyloseq Volume Scale >0 -2018 ####
+
+# Loading Data
+
+asvtable_18 <- fread("Data/asvtable_de18 - Copy.csv")
+Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
+
+#Changing row names in "Run123_taxa"
+Run123_taxa$V1=NULL
+rownames(Run123_taxa)= Run123_taxa$V2
+head(rownames(Run123_taxa))
+
+#Changing row names in meta_gen18 data
+rownames(meta_gen18_data_highscale)= meta_gen18_data_highscale$UniqueID 
+head(rownames(meta_gen18_data_highscale))
+
+#Changing rownames in asvtable data
+rownames(asvtable_18)= asvtable_18$V1
+head(rownames(asvtable_18))
+
+#Setting taxmat and otumat
+taxmat18=Run123_taxa
+taxmat18=Run123_taxa[-c(1)]
+otumat18=asvtable_18
+
+#Converting to matrix
+otu_matrix18= as.matrix(otumat18, rownames = "V1")
+
+tax_matrix18=as.matrix(taxmat18, rownames = "V2")
+colnames(tax_matrix18) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
+                            "Genus.x", "Genus.y", "Species")
+meta_gen18_data_highscale=as.data.frame(meta_gen18_data_highscale)
+
+#Setting OTU, TAX, and SAMP
+OTU18= otu_table(otu_matrix18, taxa_are_rows = FALSE)
+
+TAX18= tax_table(tax_matrix18)
+
+SAMP18= sample_data(meta_gen18_data_highscale)
+
+OTU_count18=transform_sample_counts(OTU18, function(x) 1E6 * x/sum(x))
+
+physeq_highsc18 = phyloseq(OTU18, TAX18, SAMP18)
+physeq_highsc18
+
+physeq_counthighs18 = phyloseq(OTU_count18, TAX18, SAMP18)
+physeq_counthighs18
+
+# Saving Physeq as an RDS
+saveRDS(physeq_highsc18, "Data/physeq_highsc18.rds")
+physeq_highsc18 <- readRDS("Data/physeq_highsc18.rds")
+
+saveRDS(physeq_counthighs18, "Data/physeq_counthighs18.rds")
+
+
+# Phyloseq Volume Scale >0 -2017 ####
+
+meta17_data_highscale <- meta17_data %>% 
+  filter(Volume_scale >= 0) 
+
+#Changing row names in "Run23_taxa"
+Run123_taxa$V1=NULL
+rownames(Run123_taxa)= Run123_taxa$V2
+head(rownames(Run123_taxa))
+
+#Changing row names in "meta_17" data
+rownames(meta17_data_highscale)= meta17_data_highscale$UniqueID
+meta17_data$X=NULL
+head(rownames(meta17_data_highscale))
+
+#Changing row names in "asvtable_17" data
+rownames(asvtable_17)= asvtable_17$V1
+asvtable_17$V1=NULL
+head(rownames(asvtable_17))
+
+
+#Setting taxmat and otumat
+taxmat17=Run123_taxa
+taxmat17=Run123_taxa[-c(1)]
+otumat17=asvtable_17
+
+#Converting to matrix
+otu_matrix17= as.matrix(otumat17, rownames = rownames(asvtable_17))
+
+tax_matrix17=as.matrix(taxmat17, rownames = "V2")
+colnames(tax_matrix17) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
+                            "Genus.x", "Genus.y", "Species")
+meta17_data_highscale=as.data.frame(meta17_data_highscale)
+
+#Setting OTU, TAX, and SAMP
+OTU17= otu_table(otu_matrix17, taxa_are_rows = FALSE)
+
+TAX17= tax_table(tax_matrix17)
+
+SAMP17= sample_data(meta17_data_highscale)
+
+
+OTU_count17=transform_sample_counts(OTU17, function(x) 1E6 * x/sum(x))
+
+
+physeq_highsc17 = phyloseq(OTU17, TAX17, SAMP17)
+physeq_highsc17
+
+physeq_counthighs17 = phyloseq(OTU_count17, TAX17, SAMP17)
+physeq_counthighs17
+
+
+# Saving Physeq as an RDS
+saveRDS(physeq_highsc17, "Data/physeq_highsc17.rds")
+
+saveRDS(physeq_counthighs17, "Data/physeq_counthighs17.rds")
+
+# how to lay out, how to present, create figures
+
+# Getting Taxa 
+
+# Getting positive and negative 
+
 
 
 

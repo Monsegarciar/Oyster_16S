@@ -112,4 +112,14 @@ meta_gen18_data_highscale <- meta_gen18_data %>%
 meta_gen18_data_lowscale <- meta_gen18_data %>%   # Lost 25 values due to the differences in measurements not having values 
   filter(Volume_scale < 0)
 
+# Plot scale and Relative Abundance -Volume 
+
+physeq_posscale <- prune_taxa(rownames())
+
+
+
+
+
+
+
 
