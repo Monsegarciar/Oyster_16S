@@ -58,8 +58,9 @@ df_significant_highsc17_pos <- as.data.frame(tax_table(sub_significant_highsc17_
 write.table(df_significant_highsc17_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2017.csv", quote = FALSE, sep = ",", col.names = T)
 
 otu <- as.matrix(otu_table(sub_significant_highsc17_pos))
-OTU2<- otu+1 #turn into phyloseq
-View(OTU2)
+otu_table17<- otu+1 
+View(otu_table17)
+
 # Turning into Phyloseq Object
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -85,10 +86,9 @@ taxmat17=Run123_taxa[-c(1)]
 tax_matrix17=as.matrix(taxmat17, rownames = "V2")
 colnames(tax_matrix17) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
                             "Genus.x", "Genus.y", "Species")
-meta17_data=as.data.frame(meta17_data)
 
 #Setting OTU, TAX, and SAMP
-OTU17= OTU2
+OTU17= otu_table17
 
 TAX17= tax_table(tax_matrix17)
 
@@ -104,17 +104,17 @@ physeq_hi17
 physeq_hict17 = phyloseq(OTU_count17, TAX17, SAMP17)
 physeq_hict17
 
-
 # Saving Physeq as an RDS
-saveRDS(physeq_class17, "Data/physeq_class17.rds")
-physeq_class17 <- readRDS("Data/physeq_class17.rds")
+saveRDS(physeq_hi17, "Data/physeq_hi17.rds")
+physeq_hi17 <- readRDS("Data/physeq_hi17.rds")
 
-saveRDS(physeq_count17, "Data/physeq_count17.rds")
-physeq_count17 <- readRDS("Data/physeq_count17.rds")
+saveRDS(physeq_hict17, "Data/physeq_hict17.rds")
+physeq_hict17 <- readRDS("Data/physeq_hict17.rds")
 
-
-plot_heatmap(physeq_hict17, method = "NMDS", distance = "bray", low = "#000033", high ="#FFFFCC"  , na.value = "white", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume-2017" )
-
+values <- 
+  
+plot_heatmap(physeq_hict17, method = "NMDS", distance = "bray", low = "#FFFFCC", high ="#000033", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume-2017")
+?colors
 
 #### Negative 
 significant_highsc17_neg <- significant_highsc17[significant_highsc17$log2FoldChange<0, ]
@@ -124,7 +124,6 @@ dim(significant_highsc17_neg)
 # 2018 
 physeq_highsc18 <- readRDS("Data/physeq_highsc18.rds")
 
-deseq17 = DESeq(deseq17, test = "Wald", fitType = "parametric")
 des_highsc18 <- phyloseq_to_deseq2(physeq_highsc18, ~ Volume_scale)
 des_highsc18 <- DESeq(des_highsc18, test="Wald", fitType = "parametric")
 resultsNames(des_highsc18)
@@ -155,7 +154,57 @@ sub_significant_highsc18_pos <- subset_taxa(prune_taxa(rownames(significant_high
 df_significant_highsc18_pos <- as.data.frame(tax_table(sub_significant_highsc18_pos))
 write.table(df_significant_highsc18_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
 
-plot_heatmap(sigtab17, method = "NMDS", distance ="bray", low = "#FFFFCC", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
+otu18 <- as.matrix(otu_table(sub_significant_highsc18_pos))
+otu_table18<- otu18+1 
+View(otu_table18)
+
+# Loading Data
+meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
+
+Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
+
+#Changing row names in "Run123_taxa"
+Run123_taxa$V1=NULL
+rownames(Run123_taxa)= Run123_taxa$V2
+head(rownames(Run123_taxa))
+
+#Changing row names in meta_gen18 data
+rownames(meta_gen18_data)= meta_gen18_data$UniqueID 
+head(rownames(meta_gen18_data))
+
+#Setting taxmat and otumat
+taxmat18=Run123_taxa
+taxmat18=Run123_taxa[-c(1)]
+
+#Converting to matrix
+
+tax_matrix18=as.matrix(taxmat18, rownames = "V2")
+colnames(tax_matrix18) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
+                            "Genus.x", "Genus.y", "Species")
+
+#Setting OTU, TAX, and SAMP
+OTU18= otu_table18
+
+TAX18= tax_table(tax_matrix18)
+
+SAMP18= sample_data(meta_gen18_data)
+
+OTU_count18=transform_sample_counts(OTU18, function(x) 1E6 * x/sum(x))
+
+physeq_hi18 = phyloseq(OTU18, TAX18, SAMP18)
+physeq_hi18
+
+physeq_hict18 = phyloseq(OTU_count18, TAX18, SAMP18)
+physeq_hict18
+
+# Saving Physeq as an RDS
+saveRDS(physeq_hi18, "Data/physeq_hi18.rds")
+physeq_hi18
+
+saveRDS(physeq_hict18, "Data/physeq_count18.rds")
+physeq_hict18 
+
+plot_heatmap(physeq_hict18, method = "NMDS", distance ="bray", low = "#FFFFCC", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
 
 #### Negative OTUs
 
