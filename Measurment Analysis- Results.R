@@ -61,7 +61,7 @@ otu <- as.matrix(otu_table(sub_significant_highsc17_pos))
 otu_table17<- otu+1 
 View(otu_table17)
 
-# Turning into Phyloseq Object
+###### Turning into Phyloseq Object #####
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
 
@@ -94,34 +94,46 @@ TAX17= tax_table(tax_matrix17)
 
 SAMP17= sample_data(meta17_data)
 
-
-OTU_count17=transform_sample_counts(OTU17, function(x) 1E6 * x/sum(x))
-
-
 physeq_hi17 = phyloseq(OTU17, TAX17, SAMP17)
 physeq_hi17
 
-physeq_hict17 = phyloseq(OTU_count17, TAX17, SAMP17)
-physeq_hict17
-
 # Saving Physeq as an RDS
-saveRDS(physeq_hi17, "Data/physeq_hi17.rds")
+saveRDS(physeq_hi_neg17, "Data/physeq_hi_neg17.rds")
 physeq_hi17 <- readRDS("Data/physeq_hi17.rds")
 
-saveRDS(physeq_hict17, "Data/physeq_hict17.rds")
-physeq_hict17 <- readRDS("Data/physeq_hict17.rds")
+display.brewer.all()
+###### Heatmap-2017 #####
+mycolors= colorRampPalette(brewer.pal(9, "Blues"))# How many colors
 
-values <- 
-  
-plot_heatmap(physeq_hict17, method = "NMDS", distance = "bray", low = "#FFFFCC", high ="#000033", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume-2017")
-?colors
+plot_heatmap(physeq_hi17, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume-2017")
+
+plot_heatmap(physeq_hi_neg17, method = "NMDS", distance = "bray", low = "#FFFFFF", high ="#FF3300", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Negative OTUs Associated with Scaled Volume-2017")
 
 #### Negative 
 significant_highsc17_neg <- significant_highsc17[significant_highsc17$log2FoldChange<0, ]
 dim(significant_highsc17_neg)
 # 42, 6
 
-# 2018 
+sub_significant_highsc17_neg <- subset_taxa(prune_taxa(rownames(significant_highsc17_neg), physeq_highsc17))
+df_significant_highsc17_pos <- as.data.frame(tax_table(sub_significant_highsc17_pos))
+write.table(df_significant_highsc17_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2017.csv", quote = FALSE, sep = ",", col.names = T)
+
+tt = as.data.frame(otu_table(sub_significant_highsc17_neg))
+otu_neg <- as.matrix(otu_table(sub_significant_highsc17_neg))
+otu_table17_neg <- otu_neg+1 
+View(otu_table17_neg)
+
+OTU17= otu_table17_neg
+physeq_hi_neg17 = phyloseq(OTU17, TAX17, SAMP17)
+physeq_hi_neg17
+
+# Saving Physeq as an RDS
+saveRDS(physeq_hi17, "Data/physeq_hi_neg17.rds")
+physeq_hi_neg17 <- readRDS("Data/physeq_hi_neg17.rds")
+physeq_hi_neg17
+
+
+###### 2018 #####
 physeq_highsc18 <- readRDS("Data/physeq_highsc18.rds")
 
 des_highsc18 <- phyloseq_to_deseq2(physeq_highsc18, ~ Volume_scale)
@@ -139,8 +151,6 @@ df_significant_highsc18 <- as.data.frame(tax_table(sub_significant_highsc18))
 write.table(df_significant_highsc18, file = "Data/Significant OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
 
 ### order by size = smallest to largest, filter out to see where they appear in a certain amount of samples (e.g. found in half of sample), if not able to work go back to measurements individually 
-# https://david-barnett.github.io/microViz/reference/tax_filter.html 
-# http://joey711.github.io/phyloseq/plot_heatmap-examples
 
 # run non-scaled ones to see the difference between them (remaking them and take out OTUs only found in 1 sample)
 
@@ -189,29 +199,49 @@ TAX18= tax_table(tax_matrix18)
 
 SAMP18= sample_data(meta_gen18_data)
 
-OTU_count18=transform_sample_counts(OTU18, function(x) 1E6 * x/sum(x))
-
 physeq_hi18 = phyloseq(OTU18, TAX18, SAMP18)
 physeq_hi18
-
-physeq_hict18 = phyloseq(OTU_count18, TAX18, SAMP18)
-physeq_hict18
 
 # Saving Physeq as an RDS
 saveRDS(physeq_hi18, "Data/physeq_hi18.rds")
 physeq_hi18
 
-saveRDS(physeq_hict18, "Data/physeq_count18.rds")
-physeq_hict18 
+###### HeatMap-2018 #####
+plot_heatmap(physeq_hi18, method = "NMDS", distance ="bray", low = "#FFFFFF", high = "#000033", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
 
-plot_heatmap(physeq_hict18, method = "NMDS", distance ="bray", low = "#FFFFCC", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
+plot_heatmap(physeq_hi_neg18, method = "NMDS", distance ="bray", low = "#FFFFFF", high = "#000033", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
 
 #### Negative OTUs
 
 significant_highsc18_neg <- significant_highsc18[significant_highsc18$log2FoldChange<0, ]
 dim(significant_highsc18_neg)
+# 38,6
 
-#### 2.Measurements taxa
+sub_significant_highsc18_neg <- subset_taxa(prune_taxa(rownames(significant_highsc18_neg), physeq_highsc18))
+df_significant_highsc18_pos <- as.data.frame(tax_table(sub_significant_highsc18_pos))
+write.table(df_significant_highsc18_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
+
+otu18_neg <- as.matrix(otu_table(sub_significant_highsc18_neg))
+otu_table18_neg<- otu18_neg+1 
+View(otu_table18_neg)
+
+OTU18= otu_table18_neg
+
+physeq_hi_neg18 = phyloseq(OTU18, TAX18, SAMP18)
+physeq_hi_neg18
+
+# Saving Physeq as an RDS
+saveRDS(physeq_hi_neg18, "Data/physeq_hi18.rds")
+physeq_hi_neg18
+
+###### Pruning OTU table #####
+# https://david-barnett.github.io/microViz/reference/tax_filter.html 
+
+physeq_above = genefilter_sample(physeq, filterfun_sample(function(x) x>5), A=0.5*nsamples(physeq))
+physeq1 = prune_taxa(physeqwho, physeq_above)
+physeq2 = transform_sample_counts(physeq, function(x) 1E6 * x/sum(x))
+
+##### 2.Measurements taxa #####
 # This section covers the significant OTUs associated with measurements; length, width, height. NOTE: These are not scaled nor are they the volume.  
 
 # Taxa- Class
@@ -226,7 +256,7 @@ dim(significant_highsc18_neg)
 # Any papers on such taxa and relationships with oysters
 
 
-#### 3.Phyloseq Analysis with Volume Delta
+#### 3.Phyloseq Analysis with Volume Delta #####
 
 physeq_class17 <- readRDS("Data/physeq_class17.rds")
 
@@ -245,6 +275,5 @@ dim(significant_vol17)
 sub_significant_vol17 <- subset_taxa(prune_taxa(rownames(significant_vol17), physeq_class17))
 df_significant_vol17 <- as.data.frame(tax_table(sub_significant_vol17))
 write.table(df_significant_vol17, file = "Data/Significant OTU's for Volume Delta 2017.csv", quote = FALSE, sep = ",", col.names = T)
-
-#phyloseq_rm_na_tax()
+###### Heatmap-2017 #####
 plot_heatmap(physeq_count17_posotuvol, method = "NMDS", distance ="bray", low = "#FFFFCC", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID", sample.order = "Volume_delta", title = "Heat Map of Postive OTUs Associated with Volume") 
