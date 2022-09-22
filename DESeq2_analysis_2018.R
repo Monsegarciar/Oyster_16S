@@ -29,13 +29,13 @@ physeq_count18 <- readRDS("Data/physeq_count18.rds")
 physeq_count18 = subset_samples(physeq_count18, Weight_delta != "NA")
 
 deseq18_weight = phyloseq_to_deseq2(physeq_count18, ~ Weight_delta)
- 
+
+# change 1= mean across rows 
 gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
 geoMeans = apply(OTU_count18, 2, gm_mean)
 deseq18_weight = estimateSizeFactors(deseq18_weight, geoMeans=geoMeans, locfunc=shorth)
 deseq18_weight = DESeq(deseq18_weight, test="Wald", fitType="parametric")
-
-# change 1= mean across rows 
+ 
 res18_weight = results(deseq18_weight, cooksCutoff = FALSE)
 alpha = 0.05
 sigtab18_weight = res18_weight[which(res18_weight$padj < alpha), ]
