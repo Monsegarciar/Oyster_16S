@@ -60,7 +60,7 @@ physeq_count18
 # Saving Physeq as an RDS
 saveRDS(physeq_class18, "Data/physeq_class18.rds")
 physeq_class18 <- readRDS("Data/physeq_class18.rds")
-
+physeq_class18
 saveRDS(physeq_count18, "Data/physeq_count18.rds")
 physeq_count18 <- readRDS("Data/physeq_count18.rds")
 
