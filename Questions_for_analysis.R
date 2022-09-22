@@ -73,7 +73,7 @@ plot_bar(pp.ch) #Plot bar of samples(x) and abundance (y) of Proteobacteria
 bar1=plot_bar(pp.ch, x="Site.x", fill = "Genus")
 print(bar1)
 
-# Colot Palette
+# Color Palette
 mycolors= colorRampPalette(brewer.pal(8, "Dark2"))(442)
 plot_bar(pp.ch,  fill="Genus.x", x="Treatment2") +
   geom_bar(aes(color=Genus.x, fill=Genus.x), stat="identity", position="stack")+
