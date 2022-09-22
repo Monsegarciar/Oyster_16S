@@ -25,12 +25,11 @@ library(vegan)
 library(remotes)
 library(DESeq2)
 library(genefilter)
-find.package("devtools")
 
 ##### 1.Phyloseq Analysis with scaled volume #####
 
 physeq_highsc17 <- readRDS("Data/physeq_highsc17.rds")
-
+physeq_highsc17
 des_highsc17 <- phyloseq_to_deseq2(physeq_highsc17, ~ Volume_scale)
 des_highsc17 <- DESeq(des_highsc17, test="Wald", fitType = "parametric")
 resultsNames(des_highsc17)
@@ -45,8 +44,6 @@ sub_significant_highsc17 <- subset_taxa(prune_taxa(rownames(significant_highsc17
 df_significant_highsc17 <- as.data.frame(tax_table(sub_significant_highsc17))
 write.table(df_significant_highsc17, file = "Data/Significant OTU's for Scaled Volume 2017.csv", quote = FALSE, sep = ",", col.names = T)
 
-#Set 0 to 1, have 1 be "white" instead of NA values
-
 #### Positive OTUs
 
 significant_highsc17_pos <- significant_highsc17[significant_highsc17$log2FoldChange>0,]
@@ -60,6 +57,10 @@ write.table(df_significant_highsc17_pos, file = "Data/Significant Positive OTU's
 otu <- as.matrix(otu_table(sub_significant_highsc17_pos))
 otu_table17<- otu+1 
 View(otu_table17)
+
+
+otu_table17 <- filter(otu, filterfun_sample(function(x) x>0), A=0.3*nsamples(otu))
+prune_taxa(otu,)
 
 ###### Turning into Phyloseq Object #####
 
@@ -150,7 +151,7 @@ sub_significant_highsc18 <- subset_taxa(prune_taxa(rownames(significant_highsc18
 df_significant_highsc18 <- as.data.frame(tax_table(sub_significant_highsc18))
 write.table(df_significant_highsc18, file = "Data/Significant OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
 
-### order by size = smallest to largest, filter out to see where they appear in a certain amount of samples (e.g. found in half of sample), if not able to work go back to measurements individually 
+# filter out to see where they appear in a certain amount of samples (e.g. found in half of sample), if not able to work go back to measurements individually 
 
 # run non-scaled ones to see the difference between them (remaking them and take out OTUs only found in 1 sample)
 
@@ -164,9 +165,16 @@ sub_significant_highsc18_pos <- subset_taxa(prune_taxa(rownames(significant_high
 df_significant_highsc18_pos <- as.data.frame(tax_table(sub_significant_highsc18_pos))
 write.table(df_significant_highsc18_pos, file = "Data/Significant Positive OTU's for Scaled Volume 2018.csv", quote = FALSE, sep = ",", col.names = T)
 
-otu18 <- as.matrix(otu_table(sub_significant_highsc18_pos))
+otu18 <- as.matrix(otu_table(sub_significant_highsc18_pos)) 
 otu_table18<- otu18+1 
+View(table18)
 View(otu_table18)
+
+OTU_table18 <- genefilter_sample(otu_table18, filterfun_sample(function(x) x>0), A=0.3*nsamples(otu_table18))
+table18 = prune_taxa(rownames(OTU_table18), tax_table(physeq_hi18))
+rownames(table18)
+
+rownames(as.matrix(OTU_table18))
 
 # Loading Data
 meta_gen18_data <- read.csv("Data/metagenetics_data18.csv")
@@ -175,7 +183,7 @@ Run123_taxa <- fread("Data/Run123_taxa_complete - Copy.csv")
 
 #Changing row names in "Run123_taxa"
 Run123_taxa$V1=NULL
-rownames(Run123_taxa)= Run123_taxa$V2
+rownames(table18)= Run123_taxa$V2
 head(rownames(Run123_taxa))
 
 #Changing row names in meta_gen18 data
@@ -183,11 +191,12 @@ rownames(meta_gen18_data)= meta_gen18_data$UniqueID
 head(rownames(meta_gen18_data))
 
 #Setting taxmat and otumat
-taxmat18=Run123_taxa
+taxmat18=table18
 taxmat18=Run123_taxa[-c(1)]
+otumat18=OTU_table18
 
 #Converting to matrix
-
+otu_matrix18= as.matrix(otumat18, rownames = "V1")
 tax_matrix18=as.matrix(taxmat18, rownames = "V2")
 colnames(tax_matrix18) <- c("Kingdom", "Phylum", "Class", "Order", "Family", 
                             "Genus.x", "Genus.y", "Species")
@@ -202,10 +211,12 @@ SAMP18= sample_data(meta_gen18_data)
 physeq_hi18 = phyloseq(OTU18, TAX18, SAMP18)
 physeq_hi18
 
+View(as.data.frame(TAX18))
+
 # Saving Physeq as an RDS
 saveRDS(physeq_hi18, "Data/physeq_hi18.rds")
+physeq_hi18 <- readRDS("Data/physeq_hi18.rds")
 physeq_hi18
-
 ###### HeatMap-2018 #####
 plot_heatmap(physeq_hi18, method = "NMDS", distance ="bray", low = "#FFFFFF", high = "#000033", taxa.label = "Order", sample.label = "Volume_scale", sample.order = "Volume_scale", title = "Heat Map of Postive OTUs Associated with Scaled Volume") 
 
@@ -232,14 +243,19 @@ physeq_hi_neg18
 
 # Saving Physeq as an RDS
 saveRDS(physeq_hi_neg18, "Data/physeq_hi18.rds")
-physeq_hi_neg18
+physeq_hi_neg18 = readRDS("Data/physeq_count18.rds")
+
+physeq_highsc18 = readRDS("Data/physeq_highsc18.rds")
+physeq_highsc18
 
 ###### Pruning OTU table #####
 # https://david-barnett.github.io/microViz/reference/tax_filter.html 
-
-physeq_above = genefilter_sample(physeq, filterfun_sample(function(x) x>5), A=0.5*nsamples(physeq))
-physeq1 = prune_taxa(physeqwho, physeq_above)
-physeq2 = transform_sample_counts(physeq, function(x) 1E6 * x/sum(x))
+# min_prevalence = 3 = number of proportion of samples that a taxon must be present in
+tax_filter(physeq_highsc18, min_prevalence = 3, min_total_abundance = 1)
+df <- as.data.frame(otu_table(physeq_highsc18))
+View(df)
+genefilter_sample(physeq_highsc18, filterfun_sample(function(x) x>0), A=0.3*nsamples(physeq_highsc18))
+physeq1 = prune_taxa(physeq_highsc18, physeq_above)
 
 ##### 2.Measurements taxa #####
 # This section covers the significant OTUs associated with measurements; length, width, height. NOTE: These are not scaled nor are they the volume.  
@@ -276,4 +292,4 @@ sub_significant_vol17 <- subset_taxa(prune_taxa(rownames(significant_vol17), phy
 df_significant_vol17 <- as.data.frame(tax_table(sub_significant_vol17))
 write.table(df_significant_vol17, file = "Data/Significant OTU's for Volume Delta 2017.csv", quote = FALSE, sep = ",", col.names = T)
 ###### Heatmap-2017 #####
-plot_heatmap(physeq_count17_posotuvol, method = "NMDS", distance ="bray", low = "#FFFFCC", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID", sample.order = "Volume_delta", title = "Heat Map of Postive OTUs Associated with Volume") 
+plot_heatmap(physeq_count17_posotuvol, method = "NMDS", distance ="bray", low = "#FFFFFF", high = "#000033", na.value = "white", taxa.label = "Order", sample.label = "UniqueID", sample.order = "Volume_delta", title = "Heat Map of Postive OTUs Associated with Volume") 
