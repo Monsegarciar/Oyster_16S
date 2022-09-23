@@ -1,17 +1,38 @@
+
+# Taxonomy Associated with Growth ####
+# 2022-09-22
+# Author: Monserrat Garcia
+
+
+# Packages ####
+require(microViz)
+require(ggplot2)
+require(RColorBrewer)
+require(dplyr)
+require(tidyr)
+require(DESeq2)
+require(data.table)
+library(genefilter)
+require(ggplot2)
+require(tidyverse)
+
 # Filtering out OTU tables 
 
 physeq_count18 <- readRDS("Data/physeq_count18.rds")
+physeq_count18
 
 physeq_count17 <- readRDS("Data/physeq_count17.rds")
 physeq_count17
 
 #2017 
+ff <- as.factors(sample_data(physeq_count17)$Site.x)
 
 physeq_count17 = subset_samples(physeq_count17, Volume_scale != "NA")
-des_count17 <- phyloseq_to_deseq2(physeq_count17, ~ Volume_scale)
+des_count17 <- phyloseq_to_deseq2(physeq_count17, ~ Volume_scale+Site.x)
 des_count17 <- DESeq(des_count17, test="Wald", fitType = "parametric")
 
 results17 <- results(des_count17, name = "Volume_scale")
+results17
 significant17 <- results17[which(results17$padj <0.05), ]
 sigtab17 = cbind(as(significant17, "data.frame"), as(tax_table(physeq_count17)[rownames(significant17), ], "matrix"))
 
@@ -19,22 +40,32 @@ sigtab17 = cbind(as(significant17, "data.frame"), as(tax_table(physeq_count17)[r
 sigtab_17_vol <- subset(sigtab17, select = -c(baseMean, log2FoldChange, 
                                                         lfcSE, stat, pvalue, padj))
 
+###### Log2fold Change ####
+
 #Phylum
 x = tapply(sigtab17$log2FoldChange, sigtab17$Phylum, function(x) max(x))
 x = sort(x, TRUE)
 sigtab17$Phylum = factor(as.character(sigtab17$Phylum), levels=names(x))
 
+# Class
+x = tapply(sigtab17$log2FoldChange, sigtab17$Class, function(x) max(x))
+x = sort(x, TRUE)
+sigtab17$Class = factor(as.character(sigtab17$Class), levels=names(x))
+
+
+mycolors3= colorRampPalette(brewer.pal(12, "Paired"))(55)
 ggplot(sigtab17, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "2017")
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "2017") +scale_fill_manual(values = mycolors3) +
+  scale_color_manual(values = mycolors3)
 
 
-#Bar Plot
-mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(75)
+#####Bar Plot#####
+mycolors1= brewer.pal(11, "Paired")
 
-plot_bar(physeq_sig18, x= "Volume_scale", fill= "Order")+
-  geom_bar(aes(color=Order, fill = Order), stat = "identity", position = "stack") + facet_wrap(vars(Volume_scale), scales = 'free_x') +
-  scale_fill_manual(values = mycolors2) +
-  scale_color_manual(values = mycolors2) +
+plot_bar(physeq_v17, x= "Volume_scale", fill= "Order") +
+  geom_bar(aes(color=Order, fill = Order), stat = "identity", position = "stack") +
+  scale_fill_manual(values = mycolors1) +
+  scale_color_manual(values = mycolors1) +
   theme_bw() +
   theme(legend.position = "right", panel.border = element_blank(), 
         panel.grid.major.x = element_blank(), 
@@ -51,9 +82,12 @@ physeq17 = subset_taxa(prune_taxa(rownames(taxa_vol), physeq_count17))
 physeq_count17
 physeq17
 
-physeq_si17 = tax_filter(physeq17, min_prevalence = 0.03, min_sample_abundance = 1)
-physeq_si18
-sf_17 <- genefilter_sample(physeq17, filterfun_sample(function(x) x > 0), A=0.5*nsamples(physeq17))
+# with site = 3871, and taxa is 10 
+
+physeq_si17 = tax_filter(physeq17, min_prevalence = 0.3, min_sample_abundance = 1)
+physeq_si17
+
+sf_17 <- genefilter_sample(physeq17, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq17))
 # 2193, 6
 
 physeq17_v = prune_taxa(sf_17, physeq17)
@@ -100,10 +134,12 @@ SAMP17= sample_data(meta17_data)
 physeq_v17 = phyloseq(OTU17, TAX17, SAMP17)
 physeq_v17
 
+taxtable_17 = as.data.frame(tax_table(physeq17_v))
+
+taxtable17 = as.data.frame(tax_table(physeq_v17))
 ##### Heatmap #####
 
 plot_heatmap(physeq_v17, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", taxa.label = "Phylum", sample.label = "Volume_scale", sample.order = "Volume_scale")
-
 
 sub_significant17 <- subset_taxa(prune_taxa(rownames(significant17), physeq_count17))
 
@@ -118,9 +154,9 @@ sub_significant17_pos
 
 
 #2018 
-
+s18 <- sample_data(physeq_count18)
 physeq_count18 = subset_samples(physeq_count18, Volume_scale != "NA")
-des_count18 <- phyloseq_to_deseq2(physeq_count18, ~ Volume_scale)
+des_count18 <- phyloseq_to_deseq2(physeq_count18, ~ Volume_scale + Bucket2)
 
 gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
 geoMeans = apply(OTU_count18, 2, gm_mean)
@@ -139,16 +175,17 @@ sigtab_18_vol <- subset(sigtab18, select = -c(baseMean, log2FoldChange,
 physeq_count18
 taxa18 <- as.matrix(sigtab_18_vol)
 taxa_vol18 <- tax_table(taxa18)
-physeq18 = subset_taxa(prune_taxa(rownames(taxa_vol18)), physeq_count18) 
+physeq18 = subset_taxa(prune_taxa(rownames(taxa_vol18), physeq_count18)) 
 physeq_count18
 physeq18
 
-physeq_si18 = tax_filter(physeq18, min_prevalence = 0.33, min_sample_abundance = 1)
+# With site = 2471, 5 taxa  
+physeq_si18 = tax_filter(physeq18, min_prevalence = 0.3, min_sample_abundance = 1)
 physeq_si18
 
 physeq_sig18 = genefilter(physeq18, filterfun_sample(function(x) x > 0, A=0.3*nsamples(physeq18)))
 
-sf_18 <- genefilter_sample(physeq18, filter(function(x) x > 0), A=0.3*nsamples(physeq18))
+sf_18 <- genefilter_sample(physeq18, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq18))
 # 1277, 6
 
 physeq18_v = prune_taxa(sf_18, physeq18)
@@ -193,7 +230,9 @@ SAMP18= sample_data(meta_gen18_data)
 physeq_sig18 = phyloseq(OTU18, TAX18, SAMP18)
 physeq_sig18
 
-physeq_si18
+taxtable_18 <- as.data.frame(tax_table(physeq_si18))
+
+taxtable18 <- as.data.frame(tax_table(physeq_sig18))
 
 # Graphs ####
 plot_heatmap(physeq_sig18, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale")
@@ -226,7 +265,7 @@ plot_ordination(physeq_sig18, Phy.ord, type = "biplot", color = "Volume_scale", 
 sd <- sample_data(physeq_count17)
 
 physeq_weight = subset_samples(physeq_count17, Weight_delta != "NA")
-des_weight17 <- phyloseq_to_deseq2(physeq_weight, ~ Weight_delta)
+des_weight17 <- phyloseq_to_deseq2(physeq_weight, ~ Weight_delta + Site.x)
 des_weight17 <- DESeq(des_weight17, test="Wald", fitType = "parametric")
 
 results_weight17 <- results(des_weight17, name = "Weight_delta")
@@ -258,7 +297,7 @@ phy_weight17 = prune_taxa(sfweight_17, physeq_weight17)
 
 physeq_weight18 = subset_samples(physeq_count18, Weight_delta !="NA")
 
-des_weight18 <- phyloseq_to_deseq2(physeq_weight18, ~ Weight_delta)
+des_weight18 <- phyloseq_to_deseq2(physeq_weight18, ~ Weight_delta + Bucket2)
 
 gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
 geoMeans = apply(OTU_count18, 2, gm_mean)
@@ -279,6 +318,7 @@ physeq_weight18 = subset_taxa(prune_taxa(rownames(taxa_weight18), physeq_count18
 physeq_count18
 physeq_weight18
 
+# Weight and bucket= 2730, 6 taxa 
 phys_weight18 = tax_filter(physeq_weight18, min_prevalence = 0.3, min_sample_abundance = 1)
 phys_weight18
 
@@ -305,22 +345,51 @@ phy_weight_sig18
 
 physeq_weight_sig18
 
+taxtable_weight18 <- as.data.frame(tax_table(phy_weight_sig18))
+
+taxtable_BuckxWeigh <- as.data.frame(tax_table(phy_weight_sig18))
+
+write.csv(taxtable_BuckxWeigh, file = "Data/taxtable_Bucket&Weight.csv")
 
 plot_heatmap(phy_weight_sig18, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", na.values = "white", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale")
 
 plot_richness(phy_weight_sig18, x= "Volume_scale", color = "Bucket2", measures = c("Simpson", "Shannon"), title = "Alpha Diversity for Treatment and Species 2017")
 
-ggplot(sigtab_weight18, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
+ggplot(phy_weight_sig18, aes(x=Class, y=log2FoldChange, color=Phylum)) + geom_point(size=6) + 
   theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "2018")
 
-plot_bar(phy_weight_sig18, x= "Volume_scale", fill= "Order")+
-  geom_bar(aes(color=Order, fill = Order), stat = "identity", position = "stack") + facet_wrap(vars(Volume_scale), scales = 'free_x') +
-  scale_fill_manual(values = mycolors2) +
+
+mycolors2= colorRampPalette(brewer.pal(8, "Dark2"))(6)
+plot_bar(phy_weight_sig18, x= "Volume_scale", fill= "Class")+
+  geom_bar(aes(color=Class, fill = Class), stat = "identity", position = "stack") + facet_wrap(vars(Bucket2), scales = 'free_x')
+  scale_fill_manual(values = mycolors2) + 
   scale_color_manual(values = mycolors2) +
   theme_bw() +
   theme(legend.position = "right", panel.border = element_blank(), 
-        panel.grid.major.x = element_blank(), 
-        panel.grid.minor.x = element_blank(), 
+        panel.grid.major.x = element_text(), 
+        panel.grid.minor.x = element_text(), 
         axis.line = element_line(color = "black"), 
-        axis.text.x = element_blank(), 
+        axis.text.x = element_text(), 
         text = element_text(size=10))
+
+df = sample_data(phy_weight_sig18)
+?theme
+plot_bar(phys, "Order", fill = "Phylum", facet_grid = ~Description) +
+  ylab("Percentage of Sequences") 
+library(metacoder)
+
+heatmap = parse_phyloseq(phy_weight_sig18)
+
+phy_weight_sig18
+
+ggplot(sigtab_weight18, aes(x=Phylum, y=rownames(taxtable_BuckxWeigh), color=Phylum)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "2018")
+
+heatmap %>%
+  heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+            node_size = n_obs,
+            node_color = n_obs,
+            layout = "davidson-harel", initial_layout = "reingold-tilford")
+  
+
+
