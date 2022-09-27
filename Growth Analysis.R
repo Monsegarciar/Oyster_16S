@@ -134,9 +134,14 @@ SAMP17= sample_data(meta17_data)
 physeq_v17 = phyloseq(OTU17, TAX17, SAMP17)
 physeq_v17
 
+saveRDS(physeq_v17, "Data/physeq_sitexvol17.rds")
+
 taxtable_17 = as.data.frame(tax_table(physeq17_v))
 
 taxtable17 = as.data.frame(tax_table(physeq_v17))
+
+write.csv(taxtable_17, file = "Data/taxtable_sitexvol17.csv")
+
 ##### Heatmap #####
 
 plot_heatmap(physeq_v17, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", taxa.label = "Phylum", sample.label = "Volume_scale", sample.order = "Volume_scale")
@@ -230,9 +235,12 @@ SAMP18= sample_data(meta_gen18_data)
 physeq_sig18 = phyloseq(OTU18, TAX18, SAMP18)
 physeq_sig18
 
+saveRDS(physeq_sig18, "Data/physeq_volxbuck18.rds")
 taxtable_18 <- as.data.frame(tax_table(physeq_si18))
 
 taxtable18 <- as.data.frame(tax_table(physeq_sig18))
+
+write.csv(taxtable18, file = "Data/taxtable_volxbuck18.csv")
 
 # Graphs ####
 plot_heatmap(physeq_sig18, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale")
@@ -291,7 +299,7 @@ sfweight_17 <- genefilter_sample(physeq_weight17, filterfun_sample(function(x) x
 phy_weight17 = prune_taxa(sfweight_17, physeq_weight17)
 # 8 taxa 
 
-
+#### *Note: All the taxa were filtered out when filtering for 1/3 of samples and at least appeared once ####
 
 # 2018 
 
@@ -343,6 +351,8 @@ SAMP18= sample_data(meta_gen18_data)
 phy_weight_sig18 = phyloseq(OTU18, TAX18, SAMP18)
 phy_weight_sig18
 
+saveRDS(phy_weight_sig18, "Data/physeq_buckxweight18.rds")
+
 physeq_weight_sig18
 
 taxtable_weight18 <- as.data.frame(tax_table(phy_weight_sig18))
@@ -350,6 +360,8 @@ taxtable_weight18 <- as.data.frame(tax_table(phy_weight_sig18))
 taxtable_BuckxWeigh <- as.data.frame(tax_table(phy_weight_sig18))
 
 write.csv(taxtable_BuckxWeigh, file = "Data/taxtable_Bucket&Weight.csv")
+
+# Plot Analysis ####
 
 plot_heatmap(phy_weight_sig18, method = "NMDS", distance = "bray",low = "#FFFFFF", high ="#FF3300", na.values = "white", taxa.label = "Family", sample.label = "Volume_scale", sample.order = "Volume_scale")
 
@@ -391,5 +403,17 @@ heatmap %>%
             node_color = n_obs,
             layout = "davidson-harel", initial_layout = "reingold-tilford")
   
+
+# Merging Tax Tables with significant OTUs for Weight and Volume ####
+
+#### Loading Tax Tables ####
+taxtable_BuckxWeigh <- read.csv("Data/taxtable_Bucket&Weight.csv")
+taxtable_sitexvol17 <- read.csv("Data/taxtable_sitexvol17.csv")
+tabtable_volxbuck18 <- read.csv("Data/taxtable_volxbuck18.csv")
+
+#### Combining Tax Tables ####
+sig_OTU_combined <- rbind(taxtable_BuckxWeigh, taxtable_sitexvol17, tabtable_volxbuck18)
+
+write.csv(sig_OTU_combined, file = "Data/sig_OTU_combined.csv")
 
 
