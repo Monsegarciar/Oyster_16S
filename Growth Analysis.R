@@ -37,8 +37,7 @@ significant17 <- results17[which(results17$padj <0.05), ]
 sigtab17 = cbind(as(significant17, "data.frame"), as(tax_table(physeq_count17)[rownames(significant17), ], "matrix"))
 
 # Creating DESEq results into a tax table ####
-sigtab_17_vol <- subset(sigtab17, select = -c(baseMean, log2FoldChange, 
-                                                        lfcSE, stat, pvalue, padj))
+sigtab_17_vol <- subset(sigtab17, select = -c(baseMean, lfcSE, stat, pvalue, padj))
 
 ###### Log2fold Change ####
 
@@ -78,6 +77,7 @@ plot_bar(physeq_v17, x= "Volume_scale", fill= "Order") +
 physeq_count17
 taxa <- as.matrix(sigtab_17_vol)
 taxa_vol <- tax_table(taxa)
+view(taxa_vol)
 physeq17 = subset_taxa(prune_taxa(rownames(taxa_vol), physeq_count17))
 physeq_count17
 physeq17
@@ -98,6 +98,19 @@ otu <- otu_table(physeq17_v)
 otu17 <- otu +1
 View(otu17)
 
+tt <- as.data.frame(tax_table(physeq17_v))
+view(tt)
+ss17 <- merge(tt, sigtab_17_vol, by ='row.names', all = TRUE)
+view(ss17)
+sss17 <- subset.data.frame(ss17, Kingdom.x != "NA")
+view(sss17)
+rownames(sss17)= sss17$Row.names
+sss17_2 <- subset(sss17, select = -c(Row.names,Kingdom.y, Phylum.y, Class.y, Order.y, Genus.y.y, Species.y, Family.y, Genus.x.y))
+
+log2 <- merge(sss17_2, sigtab_17_vol,by ="row.names")
+log2fold <- subset(log2, select = -c(Kingdom.x, Phylum.x, Class.x, Order.x, Genus.y.x, Species.x, Family.x, Genus.x.x, log2FoldChange.y))
+
+write.csv(log2fold, file = "Data/log2fold2017.csv")
 ###### Turning into Phyloseq Object #####
 
 meta17_data <- read.csv("Data/meta17_data_update.csv")
@@ -152,14 +165,14 @@ sub_significant17 <- subset_taxa(prune_taxa(rownames(significant17), physeq_coun
 
 significant17_pos <- significant17[significant17$log2FoldChange>0,]
 dim(significant17_pos)
+dd <- as.data.frame(significant17_pos)
 # 25, 6
 
 sub_significant17_pos <- subset_taxa(prune_taxa(rownames(significant17_pos), physeq_count17))
 sub_significant17_pos
 
 
-#2018 
-s18 <- sample_data(physeq_count18)
+#2018 Volume and Bucket ####
 physeq_count18 = subset_samples(physeq_count18, Volume_scale != "NA")
 des_count18 <- phyloseq_to_deseq2(physeq_count18, ~ Volume_scale + Bucket2)
 
@@ -173,8 +186,9 @@ significant18 <- results18[which(results18$padj <0.05), ]
 sigtab18 = cbind(as(significant18, "data.frame"), as(tax_table(physeq_count18)[rownames(significant18), ], "matrix"))
 
 # Creating DESEq results into a tax table ####
-sigtab_18_vol <- subset(sigtab18, select = -c(baseMean, log2FoldChange, 
+sigtab_18_vol <- subset(sigtab18, select = -c(baseMean, 
                                               lfcSE, stat, pvalue, padj))
+
 
 # Turning it into a phyloseq ####
 physeq_count18
@@ -196,6 +210,12 @@ sf_18 <- genefilter_sample(physeq18, filterfun_sample(function(x) x > 0), A=0.3*
 physeq18_v = prune_taxa(sf_18, physeq18)
 physeq18_v
 # 4 taxa 
+
+df18 <- as.data.frame(tax_table(physeq18_v))
+sv18 <- merge(df18, sigtab_18_vol, by ='row.names', all = TRUE)
+svv18 <- subset.data.frame(sv18, Kingdom.x != "NA")
+svv18_2 <- subset(svv18, select = -c(Kingdom.x,Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x,Species.x))
+write.csv(svv18_2, file = "Data/log2fold2018_volxbuck.csv")
 
 otu18 <- otu_table(physeq_si18)
 otu_v18 <- otu18 +1
@@ -316,7 +336,7 @@ results_weight18 <- results(des_weight18, name = "Weight_delta")
 significant_weight18 <- results_weight18[which(results_weight18$padj <0.05), ]
 sigtab_weight18 = cbind(as(significant_weight18, "data.frame"), as(tax_table(physeq_count18)[rownames(significant_weight18), ], "matrix"))
 
-sigtab_18_weight <- subset(sigtab_weight18, select = -c(baseMean, log2FoldChange, 
+sigtab_18_weight <- subset(sigtab_weight18, select = -c(baseMean, 
                                                         lfcSE, stat, pvalue, padj))
 
 physeq_count18
@@ -325,6 +345,12 @@ taxa_weight18 <- tax_table(taxa_w18)
 physeq_weight18 = subset_taxa(prune_taxa(rownames(taxa_weight18), physeq_count18))
 physeq_count18
 physeq_weight18
+
+df <- as.data.frame(tax_table(phy_weight18))
+ss18 <- merge(df, sigtab_18_weight, by ='row.names', all = TRUE)
+sss18 <- subset.data.frame(ss18, Kingdom.x != "NA")
+sss18_2 <- subset(sss18, select = -c(Kingdom.x,Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x,Species.x))
+write.csv(sss18_2, file = "Data/log2fold2018_weight.csv")
 
 # Weight and bucket= 2730, 6 taxa 
 phys_weight18 = tax_filter(physeq_weight18, min_prevalence = 0.3, min_sample_abundance = 1)
@@ -415,5 +441,55 @@ tabtable_volxbuck18 <- read.csv("Data/taxtable_volxbuck18.csv")
 sig_OTU_combined <- rbind(taxtable_BuckxWeigh, taxtable_sitexvol17, tabtable_volxbuck18)
 
 write.csv(sig_OTU_combined, file = "Data/sig_OTU_combined.csv")
+
+
+
+# Non-scaled Volume ####
+
+physeq_count17 = subset_samples(physeq_count17, Volume_delta != "NA")
+des_volume17 <- phyloseq_to_deseq2(physeq_count17, ~ Volume_delta+Site.x)
+des_volume17 <- DESeq(des_volume17, test="Wald", fitType = "parametric")
+
+results_volume17 <- results(des_volume17, name = "Volume_delta")
+results_volume17
+significant_volume17 <- results_volume17[which(results_volume17$padj <0.05), ]
+sigtab_volume17 = cbind(as(significant_volume17, "data.frame"), as(tax_table(physeq_count17)[rownames(significant_volume17), ], "matrix"))
+
+# Creating DESEq results into a tax table ####
+sigtab_Volume17 <- subset(sigtab_volume17, select = -c(baseMean, log2FoldChange, 
+                                              lfcSE, stat, pvalue, padj))
+
+# Turning it into a phyloseq ####
+physeq_count17
+taxa_volume17 <- as.matrix(sigtab_Volume17)
+taxa_vol17 <- tax_table(taxa_volume17)
+physeq_volume17 = subset_taxa(prune_taxa(rownames(taxa_vol17), physeq_count17))
+physeq_count17
+physeq_volume17
+
+#Look which sites are more prominent or appear more in the significant OTUs#
+
+physeq_sigvol17 = tax_filter(physeq_volume17, min_prevalence = 0.3, min_sample_abundance = 1)
+physeq_sigvol17
+
+sf_vol17 <- genefilter_sample(physeq_volume17, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq_volume17))
+# 2193, 6
+
+physeq17_volume = prune_taxa(sf_vol17, physeq_volume17)
+physeq17_volume
+
+# *Note: All 2017 filtered out with the filter settings above#
+
+
+# Sites in the Significant OTUs ####
+
+physeq_buckxweight18 <- readRDS("Data/physeq_buckxweight18.rds")
+site_data18 <- sample_data(physeq_buckxweight18)
+
+
+physeq_sitexvol17 <- readRDS("Data/physeq_sitexvol17.rds")
+site_data17 <- sample_data(physeq_sitexvol17)
+
+physeq_volxbuck18 <- readRDS("Data/physeq_volxbuck18.rds")
 
 
