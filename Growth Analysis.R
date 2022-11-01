@@ -24,6 +24,9 @@ physeq_count18
 physeq_count17 <- readRDS("Data/physeq_count17.rds")
 physeq_count17
 
+sam18 <- as.data.frame(sample_data(physeq_count18))
+sam17 <- as.data.frame(sample_data(physeq_count17))
+
 #2017 
 ff <- as.factors(sample_data(physeq_count17)$Site.x)
 
