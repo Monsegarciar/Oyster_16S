@@ -15,6 +15,8 @@ require(data.table)
 library(genefilter)
 require(ggplot2)
 require(tidyverse)
+require(phyloseq)
+library(metacoder)
 
 # Filtering out OTU tables 
 
@@ -174,6 +176,13 @@ dd <- as.data.frame(significant17_pos)
 sub_significant17_pos <- subset_taxa(prune_taxa(rownames(significant17_pos), physeq_count17))
 sub_significant17_pos
 
+heatmap17 = parse_phyloseq(physeq17_v)
+
+heatmap17 %>%
+  heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+            node_size = n_obs,
+            node_color = n_obs,
+            layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
 
 #2018 Volume and Bucket ####
 physeq_count18 = subset_samples(physeq_count18, Volume_scale != "NA")
@@ -290,8 +299,15 @@ pos_otus17 <- read.csv("Data/pos_otus17.csv")
 Phy.ord <- ordinate(physeq_sig18, "NMDS", "bray")
 plot_ordination(physeq_sig18, Phy.ord, type = "biplot", color = "Volume_scale", shape = "Bucket2", title = "biplot")
 
+heatmap18_vol = parse_phyloseq(physeq18_v)
 
+heatmap18_vol %>%
+  heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+            node_size = n_obs,
+            node_color = n_obs,
+            layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
 
+taxtable18 = as.data.frame(tax_table(physeq18_v))
 # Weight #####
 sd <- sample_data(physeq_count17)
 
@@ -417,9 +433,8 @@ df = sample_data(phy_weight_sig18)
 ?theme
 plot_bar(phys, "Order", fill = "Phylum", facet_grid = ~Description) +
   ylab("Percentage of Sequences") 
-library(metacoder)
 
-heatmap = parse_phyloseq(phy_weight_sig18)
+heatmap = parse_phyloseq(phy_weight18)
 
 phy_weight_sig18
 
@@ -430,7 +445,7 @@ heatmap %>%
   heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
             node_size = n_obs,
             node_color = n_obs,
-            layout = "davidson-harel", initial_layout = "reingold-tilford")
+            layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
   
 
 # Merging Tax Tables with significant OTUs for Weight and Volume ####
@@ -483,6 +498,48 @@ physeq17_volume
 
 # *Note: All 2017 filtered out with the filter settings above#
 
+physeq_volume18 = subset_samples(physeq_count18, Volume_delta !="NA")
+
+des_volume18 <- phyloseq_to_deseq2(physeq_volume18, ~ Volume_delta + Bucket2)
+
+gm_mean = function(row) if (all(row == 0)) 0 else exp(mean(log(row[row != 0])))
+geoMeans = apply(OTU_count18, 2, gm_mean)
+deseq_volume18 = estimateSizeFactors(des_volume18, geoMeans=geoMeans, locfunc=shorth)
+des_volume18 <- DESeq(deseq_volume18, test="Wald", fitType = "parametric")
+
+results_volume18 <- results(des_volume18, name = "Volume_delta")
+significant_volume18 <- results_volume18[which(results_volume18$padj <0.05), ]
+sigtab_volume18 = cbind(as(significant_volume18, "data.frame"), as(tax_table(physeq_count18)[rownames(significant_volume18), ], "matrix"))
+
+sigtab_18_volume <- subset(sigtab_volume18, select = -c(baseMean, 
+                                                        lfcSE, stat, pvalue, padj))
+
+physeq_count18
+taxa_v18 <- as.matrix(sigtab_18_volume)
+taxa_volume18 <- tax_table(taxa_v18)
+physeq_volume18 = subset_taxa(prune_taxa(rownames(taxa_volume18), physeq_count18))
+physeq_count18
+physeq_volume18
+
+
+physeq_sigvol18 = tax_filter(physeq_volume18, min_prevalence = 0.3, min_sample_abundance = 1)
+physeq_sigvol18
+
+sf_vol18 <- genefilter_sample(physeq_volume18, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq_volume18))
+# 2193, 6
+
+physeq18_volume = prune_taxa(sf_vol18, physeq_volume18)
+physeq18_volume
+
+taxtable_volume18 <- as.data.frame(tax_table(physeq_sigvol18))
+
+heatmap18 = parse_phyloseq(physeq_sigvol18)
+
+heatmap18 %>%
+  heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+            node_size = n_obs,
+            node_color = n_obs,
+            layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
 
 # Sites in the Significant OTUs ####
 
