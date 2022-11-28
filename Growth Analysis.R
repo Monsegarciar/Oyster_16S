@@ -552,4 +552,51 @@ site_data17 <- sample_data(physeq_sitexvol17)
 
 physeq_volxbuck18 <- readRDS("Data/physeq_volxbuck18.rds")
 
+##### Log2Fold Change Graphs ####
+log2fold18_vol <- read.csv("Data/log2fold2018_volxbuck.csv")
+log2fold18_vol
+
+log2fold18_weight <- read.csv("Data/log2fold2018_weight.csv")
+log2fold2017 <- read.csv("Data/log2fold2017.csv")
+
+
+theme_set(theme_bw())
+scale_fill_discrete <- function(palname = "Set1", ...) {
+  scale_fill_brewer(palette = palname, ...)
+}
+
+##### 2018 Volume and Bucket ####
+x = tapply(log2fold18_vol$log2FoldChange, log2fold18_vol$Class.y, function(x) max(x))
+x = sort(x, TRUE)
+log2fold18_vol$Class.y = factor(as.character(log2fold18_vol$Class.y), levels=names(x))
+
+ggplot(log2fold18_vol, aes(x=Class.y, y=log2FoldChange, color=Class.y)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Volume and Bucket Type-2018")
+
+##### 2018 Weight ####
+
+x = tapply(log2fold18_weight$log2FoldChange, log2fold18_weight$Class.y, function(x) max(x))
+x = sort(x, TRUE)
+log2fold18_weight$Class.y = factor(as.character(log2fold18_weight$Class.y), levels=names(x))
+
+ggplot(log2fold18_weight, aes(x=Class.y, y=log2FoldChange, color=Class.y)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Weight 2018")
+
+##### 2017 ####
+
+x = tapply(log2fold2017$log2FoldChange.x, log2fold2017$Class, function(x) max(x))
+x = sort(x, TRUE)
+log2fold2017$Class = factor(as.character(log2fold2017$Class), levels=names(x))
+
+ggplot(log2fold2017, aes(x=Class, y=log2FoldChange.x, color=Class)) + geom_point(size=6) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Log2FoldChange Volume and Site-2017")
+
+
+
+
+
+
+
+
+
 
