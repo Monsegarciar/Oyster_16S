@@ -93,6 +93,7 @@ physeq_si17 = tax_filter(physeq17, min_prevalence = 0.3, min_sample_abundance = 
 physeq_si17
 
 sf_17 <- genefilter_sample(physeq17, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq17))
+sf_17
 # 2193, 6
 
 physeq17_v = prune_taxa(sf_17, physeq17)
@@ -214,14 +215,14 @@ physeq18
 physeq_si18 = tax_filter(physeq18, min_prevalence = 0.3, min_sample_abundance = 1)
 physeq_si18
 
-physeq_sig18 = genefilter(physeq18, filterfun_sample(function(x) x > 0, A=0.3*nsamples(physeq18)))
+#physeq_sig18 = genefilter(physeq18, filterfun_sample(function(x) x > 0, A=0.3*nsamples(physeq18)))
 
 sf_18 <- genefilter_sample(physeq18, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq18))
 # 1277, 6
 
 physeq18_v = prune_taxa(sf_18, physeq18)
 physeq18_v
-# 4 taxa 
+# 5 taxa 
 
 df18 <- as.data.frame(tax_table(physeq18_v))
 sv18 <- merge(df18, sigtab_18_vol, by ='row.names', all = TRUE)
@@ -298,6 +299,8 @@ pos_otus17 <- read.csv("Data/pos_otus17.csv")
 
 Phy.ord <- ordinate(physeq_sig18, "NMDS", "bray")
 plot_ordination(physeq_sig18, Phy.ord, type = "biplot", color = "Volume_scale", shape = "Bucket2", title = "biplot")
+
+physeq18_v <- readRDS("Data/physeq_volxbuck18.rds")
 
 heatmap18_vol = parse_phyloseq(physeq18_v)
 
@@ -429,12 +432,16 @@ plot_bar(phy_weight_sig18, x= "Volume_scale", fill= "Class")+
         axis.text.x = element_text(), 
         text = element_text(size=10))
 
-df = sample_data(phy_weight_sig18)
+physeq_buckxweight18 <- readRDS("Data/physeq_buckxweight18.rds")
+physeq_buckxweight18
+df = sample_data(physeq_buckxweight18)
+buck <- as.data.frame(tax_table(physeq_buckxweight18))
+
 ?theme
 plot_bar(phys, "Order", fill = "Phylum", facet_grid = ~Description) +
   ylab("Percentage of Sequences") 
 
-heatmap = parse_phyloseq(phy_weight18)
+heatmap = parse_phyloseq(physeq_buckxweight18)
 
 phy_weight_sig18
 
@@ -526,20 +533,27 @@ physeq_sigvol18 = tax_filter(physeq_volume18, min_prevalence = 0.3, min_sample_a
 physeq_sigvol18
 
 sf_vol18 <- genefilter_sample(physeq_volume18, filterfun_sample(function(x) x > 0), A=0.3*nsamples(physeq_volume18))
-# 2193, 6
+# 3 taxa
 
 physeq18_volume = prune_taxa(sf_vol18, physeq_volume18)
 physeq18_volume
 
-taxtable_volume18 <- as.data.frame(tax_table(physeq_sigvol18))
+taxtable_voldelxbuck18 <- as.data.frame(tax_table(physeq_sigvol18))
+
 
 heatmap18 = parse_phyloseq(physeq_sigvol18)
+
+heatmap18 = parse_phyloseq(taxtable_sitexvol17)
 
 heatmap18 %>%
   heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
             node_size = n_obs,
             node_color = n_obs,
             layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
+write.csv(taxtable_voldelxbuck18, file = "Data/taxtable_voldelxbuck18.csv")
+
+taxtable_voldelxbuck18 <- read.csv("Data/taxtable_voldelxbuck18.csv")
+
 
 # Sites in the Significant OTUs ####
 
@@ -566,30 +580,30 @@ scale_fill_discrete <- function(palname = "Set1", ...) {
 }
 
 ##### 2018 Volume and Bucket ####
-x = tapply(log2fold18_vol$log2FoldChange, log2fold18_vol$Class.y, function(x) max(x))
+x = tapply(log2fold18_vol$log2FoldChange, log2fold18_vol$Genus, function(x) max(x))
 x = sort(x, TRUE)
-log2fold18_vol$Class.y = factor(as.character(log2fold18_vol$Class.y), levels=names(x))
+log2fold18_vol$Genus = factor(as.character(log2fold18_vol$Genus), levels=names(x))
 
-ggplot(log2fold18_vol, aes(x=Class.y, y=log2FoldChange, color=Class.y)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Volume and Bucket Type-2018")
+ggplot(log2fold18_vol, aes(x=Genus, y=log2FoldChange, color=Genus)) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Volume and Bucket Type 2018")+ ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 ##### 2018 Weight ####
 
-x = tapply(log2fold18_weight$log2FoldChange, log2fold18_weight$Class.y, function(x) max(x))
+x = tapply(log2fold18_weight$log2FoldChange, log2fold18_weight$Genus, function(x) max(x))
 x = sort(x, TRUE)
-log2fold18_weight$Class.y = factor(as.character(log2fold18_weight$Class.y), levels=names(x))
+log2fold18_weight$Genus = factor(as.character(log2fold18_weight$Genus), levels=names(x))
 
-ggplot(log2fold18_weight, aes(x=Class.y, y=log2FoldChange, color=Class.y)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Weight 2018")
+ggplot(log2fold18_weight, aes(x=Genus, y=log2FoldChange, color=Genus)) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Weight and Bucket Type 2018")+ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 ##### 2017 ####
 
-x = tapply(log2fold2017$log2FoldChange.x, log2fold2017$Class, function(x) max(x))
+x = tapply(log2fold2017$log2FoldChange.x, log2fold2017$Genus, function(x) max(x))
 x = sort(x, TRUE)
-log2fold2017$Class = factor(as.character(log2fold2017$Class), levels=names(x))
+log2fold2017$Genus = factor(as.character(log2fold2017$Genus), levels=names(x))
 
-ggplot(log2fold2017, aes(x=Class, y=log2FoldChange.x, color=Class)) + geom_point(size=6) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Log2FoldChange Volume and Site-2017")
+ggplot(log2fold2017, aes(x=Genus, y=log2FoldChange.x, color=Genus)) + 
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Log2FoldChange Volume and Site 2017") +  ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 
 
