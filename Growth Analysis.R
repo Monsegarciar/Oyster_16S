@@ -529,6 +529,14 @@ physeq_count18
 physeq_volume18
 
 
+vf <- as.data.frame(tax_table(physeq18_volume))
+vv18 <- merge(vf, sigtab_volume18, by ='row.names', all = TRUE)
+vvv18 <- subset.data.frame(vv18, Kingdom.x != "NA")
+vvv18_2 <- subset(vvv18, select = -c(Kingdom.x,Phylum.x, Class.x, Order.x, Family.x, Genus.y.x,Genus.x.x, Genus.y.y,Species.x,baseMean,lfcSE, stat,pvalue,padj))
+write.csv(vvv18_2, file = "Data/log2fold2018_voldelta.csv")
+
+
+
 physeq_sigvol18 = tax_filter(physeq_volume18, min_prevalence = 0.3, min_sample_abundance = 1)
 physeq_sigvol18
 
@@ -594,7 +602,7 @@ x = sort(x, TRUE)
 log2fold18_weight$Genus = factor(as.character(log2fold18_weight$Genus), levels=names(x))
 
 ggplot(log2fold18_weight, aes(x=Genus, y=log2FoldChange, color=Genus)) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Weight and Bucket Type 2018")+ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Weight 2018")+ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 ##### 2017 ####
 
