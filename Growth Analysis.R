@@ -593,7 +593,7 @@ x = sort(x, TRUE)
 log2fold18_vol$Genus = factor(as.character(log2fold18_vol$Genus), levels=names(x))
 
 ggplot(log2fold18_vol, aes(x=Genus, y=log2FoldChange, color=Genus)) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Volume and Bucket Type 2018")+ ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))+ labs(title = "Log2FoldChange Volume 2018")+ ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 ##### 2018 Weight ####
 
@@ -611,7 +611,7 @@ x = sort(x, TRUE)
 log2fold2017$Genus = factor(as.character(log2fold2017$Genus), levels=names(x))
 
 ggplot(log2fold2017, aes(x=Genus, y=log2FoldChange.x, color=Genus)) + 
-  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Log2FoldChange Volume and Site 2017") +  ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5)) + labs(title = "Log2FoldChange Volume 2017") +  ylab("Log2FoldChange")+geom_bar(stat="identity", aes(fill = Genus))
 
 
 
