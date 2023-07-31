@@ -25,50 +25,121 @@ oys_gen18_data <- meta_gen18_data%>%
 muss_gen18_data <- meta_gen18_data%>%
   filter(Species2.x == "IR")
 
+#Excluded one sample due to it being a very great outlier 
+
+meta17_data <- subset(meta17_data, Weight_delta<800)
 
 data_17 <- merge(oys_gen18_data,meta17_data,all = TRUE)
-data_o <- merge(oys_gen18_data,meta17_data, by="Species2.x", all.y=TRUE)
 
 
-# Bar plots
+
+data_muss <- merge(data_17, muss_gen18_data,  all=TRUE)
+
+
+# Box plots
  #Oyster
 
  #Volume
 ggplot(data_17, aes(Year, Volume_delta))+ scale_x_continuous(breaks = c(2017,2018))+
   ylab("Volume")+
-  stat_boxplot( aes(Year, Volume_delta,group=Year), 
-                geom='errorbar', linetype=1, width=0.5)+  #whiskers
-  geom_boxplot( aes(Year, Volume_delta,group= Year),outlier.shape=1) +    
-  stat_summary(fun = mean, geom="point", size=2) + 
-  stat_summary(fun.data = mean_se, geom = "errorbar")
+  stat_boxplot(aes(Year, Volume_delta,group=Year), geom='errorbar',
+                  width=0.5)+  #whiskers
+  geom_boxplot(aes(Year, Volume_delta,group= Year),outlier.shape=1) +    
+  stat_summary(fun.data = mean_se)
 
+#linetype=1,, geom = "errorbar"#stat_summary(fun = mean, geom="point", size=2) +
+ 
 
- #weight
+  #weight
 ggplot(data_17, aes(Year, Weight_delta))+ scale_x_continuous(breaks = c(2017,2018))+
+  ylab("Weight")+
   stat_boxplot( aes(Year, Weight_delta,group=Year), 
                 geom='errorbar', linetype=1, width=0.5)+  #whiskers
-  geom_boxplot( aes(Year, Weight_delta,group= Year),outlier.shape=NA) + coord_cartesian(ylim = quantile(data_17$y, c(0.1, 0.9)))+  
-  stat_summary(fun = mean, geom="point", size=2) + 
-  stat_summary(fun.data = mean_se, geom = "errorbar")
+  geom_boxplot( aes(Year, Weight_delta,group= Year),outlier.shape=NA) +  
+  stat_summary(fun.data = mean_se)
 
 
+#, geom = "errorbar", stat_summary(fun = mean, geom="point", size=2) + 
 
  #Mussels
 
+data_muss$Species <- paste(data_muss$Species2.y, data_muss$Species.x, data_muss$Year, sep = "_")
+
+data_muss$Species2<- ifelse(data_muss$Species== "CV_NA_2018", "CV2018", 
+                         ifelse(data_muss$Species== "NA_CV_2017", "CV2017", "IR2018"))
+                                
+
+view(data_muss$Species)
+view(data_muss$Species2)
+
+ggplot(data_muss, aes(Species2, Volume_delta))+ 
+  ylab("Volume")+ xlab(" Species and Year")+
+  stat_boxplot(aes(Species2, Volume_delta,group=Species2), geom='errorbar',
+               width=0.5)+  #whiskers
+  geom_boxplot(aes(Species2, Volume_delta,group= Species2),outlier.shape=1) +    
+  stat_summary(fun.data = mean_se)
+
+
+ggplot(data_muss, aes(Species2, Weight_delta))+ 
+  ylab("Weight")+ xlab(" Species and Year")+
+  stat_boxplot(aes(Species2, Weight_delta,group=Species2), geom='errorbar',
+               width=0.5)+  #whiskers
+  geom_boxplot(aes(Species2, Weight_delta,group= Species2),outlier.shape=1) +    
+  stat_summary(fun.data = mean_se)
+
+
+
+
+
+#Bar plots
+# https://stackoverflow.com/questions/29768219/grouped-barplot-in-r-with-error-bars
+#https://www.bing.com/ck/a?!&&p=268e35a90f39e1f9JmltdHM9MTY4NDE5NTIwMCZpZ3VpZD0zMzQ1M2QxMS0yNTkzLTYxZWUtMjI4ZS0zMDI1MjQwYTYwNmImaW5zaWQ9NTYwMA&ptn=3&hsh=3&fclid=33453d11-2593-61ee-228e-3025240a606b&u=a1L3ZpZGVvcy9zZWFyY2g_cT1iYXJwbG90cytpbityK3N0dWRpbyt3aXRoK21lYW4rYW5kK2Vycm9yYmFyJmRvY2lkPTYwMzQ4NzAxODcyNjg2NzE4MSZtaWQ9RTMwODk5OTBEQTBFREE5NjM5NTJFMzA4OTk5MERBMEVEQTk2Mzk1MiZ2aWV3PWRldGFpbCZGT1JNPVZJUkU&ntb=1
+
+
+out <- subset(meta17_data, Weight_delta>400)
+
+dat17 <- subset(data_17, !is.na(Weight_delta))
+
+df <-dat17 %>%
+  group_by(Year)%>%
+  summarise(mean=mean(Weight_delta),sd=sd(Weight_delta))
+
+
+ggplot(df, aes(x=Year, y=mean)) + geom_bar(stat = "identity", position = "dodge")+
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd),width=0.25, size=1, 
+                position=position_dodge(0.9))+
+  scale_x_continuous(breaks = c(2017,2018))+ylab("Weight Mean")
+
+
+
+data17 <- subset(data_17, !is.na(Volume_delta))
+
+df2 <-data17 %>%
+  group_by(Year)%>%
+  summarise(mean=mean(Volume_delta),sd=sd(Volume_delta))
+
+ggplot(df2, aes(x=Year, y=mean)) + geom_bar(stat = "identity", position = "dodge")+
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd),width=0.25, size=1, 
+                position=position_dodge(0.9))+
+  scale_x_continuous(breaks = c(2017,2018))+ylab("Volume Mean")
+
+
+
+
+####
+df1  = transform(data17, mean=rowMeans(data17[Weight_delta]), sd=apply(data17[Weight_delta],1, sd))
+
+
+ggplot(df1, aes(x=as.factor(Year), y=mean, fill=Year)) +
+  geom_bar(position=position_dodge(), stat="identity", colour='black') +
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2,position=position_dodge(.9))
 
 
 
 
 
 
-
-
-
-
-
-
-
-
+##
 oys_gen18_data <- oys_gen18_data %>%
   mutate(weight_avg=mean(oys_gen18_data$Weight_delta, na.rm = TRUE))
 

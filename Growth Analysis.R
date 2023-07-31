@@ -29,8 +29,13 @@ physeq_count17
 sam18 <- as.data.frame(sample_data(physeq_count18))
 sam17 <- as.data.frame(sample_data(physeq_count17))
 
+
 #2017 
 ff <- as.factors(sample_data(physeq_count17)$Site.x)
+
+physeq_count17 = subset_samples(physeq_count17, Weight_delta != "854")
+
+sam17_2 <- as.data.frame(sample_data(physeq_count17))
 
 physeq_count17 = subset_samples(physeq_count17, Volume_scale != "NA")
 des_count17 <- phyloseq_to_deseq2(physeq_count17, ~ Volume_scale+Site.x)
@@ -314,6 +319,7 @@ heatmap18_vol %>%
             layout = "davidson-harel", initial_layout = "reingold-tilford", node_color_axis_label = "Number of Obs")
 
 taxtable18 = as.data.frame(tax_table(physeq18_v))
+
 # Weight #####
 
 physeq_weight = subset_samples(physeq_count17, Weight_delta != "NA")
@@ -343,7 +349,13 @@ sfweight_17 <- genefilter_sample(physeq_weight17, filterfun_sample(function(x) x
 phy_weight17 = prune_taxa(sfweight_17, physeq_weight17)
 # 8 taxa 
 
-#### *Note: All the taxa were filtered out when filtering for 1/3 of samples and at least appeared once ####
+ftax17 <- as.data.frame(tax_table(phy_weight17))
+ft17 <- merge(ftax17, sigtab_weight17, by ='row.names', all = TRUE)
+fft17 <- subset.data.frame(ft17, Kingdom.x != "NA")
+ff17_2 <- subset(fft17, select = -c(Kingdom.x,Phylum.x, Class.x, Order.x, Family.x, Genus.x.x, Genus.y.x,Species.x,Genus.y.y,
+                                    padj,pvalue,stat,baseMean,lfcSE))
+write.csv(ff17_2, file = "Data/log2fold2017_weight_new.csv")
+#### *Note: All the taxa were filtered out when filtering for 1/3 of samples and at least appeared once, only one was present for 2017 weight ####
 
 # 2018 
 
@@ -616,7 +628,8 @@ log2fold18_weight$Genus = factor(as.character(log2fold18_weight$Genus), levels=n
 Genus_weigh18 <- length(unique(log2fold18_weight$Genus))
 Genus_pal_w18 <- colorRampPalette(brewer.pal(7,"Set1"))
 
-ggplot(log2fold18_weight, aes(x=Row.names, y=log2FoldChange,fill=Genus))+theme_classic() +geom_hline(yintercept = 0)+
+ggplot(log2fold18_weight, aes(x=Row.names, y=log2FoldChange,fill=Genus))+
+  theme_classic() +geom_hline(yintercept = 0)+
   theme(axis.text.x = element_blank(),panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),panel.border=element_rect(color = "black",fill = NA, size=0.5),
         axis.title = element_text(face = "bold"),text = element_text(size = 14))+
@@ -625,6 +638,7 @@ ggplot(log2fold18_weight, aes(x=Row.names, y=log2FoldChange,fill=Genus))+theme_c
   geom_bar(stat="identity")+xlab("Genus")+
   geom_text(aes(label=sprintf(log2FoldChange,fmt = "%0.2f"), fontface="bold"),vjust=-0.5, color="black",size=3.5)+
   scale_fill_manual(values = Genus_pal_w18(Genus_weigh18))
+
 
 ##### 2017 ####
 
