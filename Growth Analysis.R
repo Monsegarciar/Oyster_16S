@@ -213,7 +213,7 @@ sigtab_18_vol <- subset(sigtab18, select = -c(baseMean,
                                               lfcSE, stat, pvalue, padj))
 
 
-# Turning it into a phyloseq ####
+# Turning into a phyloseq object####
 physeq_count18
 taxa18 <- as.matrix(sigtab_18_vol)
 taxa_vol18 <- tax_table(taxa18)
